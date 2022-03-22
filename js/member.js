@@ -47,7 +47,7 @@ function xm2210_signupFunction() {
             "xm2210",
             JSON.stringify(memberInfo),
           ]);
-          if (data.Code === 9102) {
+          if (data.code === 9102) {
             chrome.storage.local.set({ xm2210: data });
             location.href = "xm2220.html";
           }
@@ -76,7 +76,7 @@ function xm2220_AuthEmailFunction() {
               "xm2220",
               JSON.stringify(memberInfo),
             ]);
-            if (data.Code === 9102) {
+            if (data.code === 9102) {
               chrome.storage.local.set({ xm2210: data });
               location.href = "xm2220.html";
             }
@@ -91,7 +91,7 @@ function xm2220_AuthEmailFunction() {
               "xm2220",
               JSON.stringify(memberInfo),
             ]);
-            if (data.Code === 9102) {
+            if (data.code === 9102) {
               chrome.storage.local.set({ xm2210: data });
               location.href = "xm2220.html";
             }
