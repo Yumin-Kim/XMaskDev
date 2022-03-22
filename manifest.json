@@ -1,0 +1,30 @@
+{
+  "name": "XMask",
+  "version": "1.0",
+  "description": "XRUN Wallet!",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "xm1010.html"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "19": "images/icon-19.png",
+    "32": "images/icon-32.png",
+    "38": "images/icon-38.png",
+    "48": "images/icon-48.png",
+    "64": "images/icon-64.png",
+    "128": "images/icon-128.png",
+    "512": "images/icon-512.png"
+  },
+  "web_accessible_resources": [],
+  "permissions": [
+    "tabs",
+    "declarativeContent",
+    "storage",
+    "activeTab",
+    "scripting"
+  ]
+}
