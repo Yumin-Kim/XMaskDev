@@ -32,7 +32,8 @@ class NetworkTryObj {
       if (typeof param !== "object") {
         rej("인자값 오류 format [ '배열' ]");
       }
-      const requestData = param.length !== 0 ? param.join(",") : param[1];
+      const requestData = param.length !== 0 ? param.join("/") : param[1];
+      console.log(requestData);
       if (this.WSSocketValidConnect()) {
         this.WSsocket.send(requestData);
         this.WSsocket.onmessage = event => {
