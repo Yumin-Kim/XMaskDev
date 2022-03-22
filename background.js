@@ -12,9 +12,6 @@ chrome.runtime.onMessage.addListener((msg, sender, res) => {
     alert("Success");
   }
 });
-chrome.storage.local.set({ Code: "asd" }, function () {
-  console.log("Value is set to " + value);
-});
 (async () => {
   let queryOptions = { active: true, currentWindow: true };
   let tab = await chrome.tabs.query(queryOptions);
