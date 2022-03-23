@@ -4,7 +4,7 @@ const webSocket = new NetworkTryObj("108.136.46.103", "5001");
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
 
-createWeb3(mainnetIP)
+createWeb3(localIP)
   .then(web3 => {
     const { eth } = web3;
     let { pathname } = location;
@@ -27,13 +27,116 @@ createWeb3(mainnetIP)
         xm2230_downloadKeyFile();
         return;
       }
+      case "xm1010": {
+        xm1010_mainPopupSignin();
+        return;
+      }
+      case "xm1030": {
+        xm1030_mainPopup(eth);
+        return;
+      }
       default:
         return;
     }
   })
   .catch(() => {});
+function xm1010_mainPopupSignin() {
+  chrome.storage.local.get("xm1010", result => {
+    if (Object.entries(result.xm1010.data).length !== 0) {
+      location.href = "xm1030.html";
+    }
+  });
+  document.getElementById("xm1010btn").addEventListener("click", function (e) {
+    loadingAnimation();
+    document.getElementById("xm1010alert").textContent = "";
+    e.preventDefault();
+    const id = document.getElementById("id").value;
+    const pin = document.getElementById("pin").value;
+    if (id.trim() === "" || pin.trim() === "") {
+      document.getElementById("xm1010alert").textContent =
+        "아이디 비밀번호 입력 확인";
+      return;
+    } else {
+      webSocket.webSocketInit(async socket => {
+        const memberInfo = {};
+        memberInfo.id = id;
+        memberInfo.pin = pin;
+        const response = await webSocket.sendMsgToSocket([
+          "xm2110",
+          JSON.stringify(memberInfo),
+        ]);
+        console.log(response);
+        if (response.code === 9102) {
+          chrome.storage.local.set({ xm1010: response });
+          location.href = "xm1020.html";
+        } else {
+          loadingOutAnimation();
+          document.getElementById("xm1010alert").textContent =
+            "아이디 비밀번호 재입력";
+          document.getElementById("id").value = "";
+          document.getElementById("pin").value = "";
+        }
+      });
+    }
+  });
+}
+function xm1030_mainPopup(eth) {
+  chrome.storage.local.get("xm1010", result => {
+    console.log(result.xm1010);
+    document.getElementById("address").textContent = result.xm1010.data.address;
+    document.getElementById("id").textContent = result.xm1010.data.id;
+    // getXRUNTokenBalanceOf({ address: result.xm1010.data.address, eth }).then(
+    getXRUNTokenBalanceOf({
+      address: "0x337f7e35f833a3be049bf2da6099cb33040dba68",
+      eth,
+    }).then(balance => {
+      console.log(balance);
+      if (balance.trim() !== "") {
+        document.getElementById("xruntoken").textContent =
+          Number(balance) / 100000000000000000 + " XRUN";
+      } else {
+        document.getElementById("xruntoken").textContent = "0 XRUN";
+      }
+    });
+    topics = [
+      null,
+      // `0x000000000000000000000000${result.xm1010.data.address.slice(2)}`,
+      `0x000000000000000000000000337f7e35f833a3be049bf2da6099cb33040dba68`,
+    ];
+
+    getContractPastEvents({ topics, eth }).then(async data => {
+      const a = await data.reduce(async (prev, cur, index) => {
+        const { returnValues, event } = cur;
+        const prevData = await prev.then();
+        const { timestamp } = await eth.getBlock(cur.blockNumber);
+
+        return Promise.resolve([
+          ...prevData,
+          historyBlock({
+            value: returnValues[2],
+            to: returnValues[1],
+            timestamp: unixToDate(timestamp),
+            event,
+          }),
+        ]);
+      }, Promise.resolve([]));
+      const b = a.join(",").replaceAll(",", "");
+      document.getElementById("historyList").innerHTML = b;
+      if (data.length !== 0) {
+        /////
+      } else {
+      }
+    });
+  });
+  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+    chrome.storage.local.clear(() => {
+      location.href = "xm1010.html";
+    });
+  });
+}
 function xm2110_signinFunction() {
   document.getElementById("xm2110btn").addEventListener("click", e => {
+    loadingAnimation();
     document.getElementById("xm2110alert").textContent = "";
     e.preventDefault();
     const id = document.getElementById("id").value;
@@ -44,7 +147,6 @@ function xm2110_signinFunction() {
       return;
     } else {
       webSocket.webSocketInit(async socket => {
-        loadingAnimation();
         const memberInfo = {};
         memberInfo.id = id;
         memberInfo.pin = pin;
@@ -56,6 +158,7 @@ function xm2110_signinFunction() {
           chrome.storage.local.set({ xm2110: data });
           location.href = "xm2120.html";
         } else {
+          loadingOutAnimation();
           document.getElementById("xm2110alert").textContent =
             "아이디 비밀번호 재입력";
           document.getElementById("id").value = "";
@@ -139,22 +242,6 @@ function xm2220_AuthEmailFunction() {
           });
         });
         document.getElementById("pass").addEventListener("click", e => {});
-        // if (count === 1) {
-        //   //소켓 초기화
-        //   webSocket.webSocketInit(async socket => {
-        //     const response = await webSocket.sendMsgToSocket([
-        //       "xm2121_request",
-        //       JSON.stringify(data),
-        //     ]);
-        //     if (response.code === 9102) {
-        //       chrome.storage.local.set({ xm2210: response });
-        //       location.href = "xm2220.html";
-        //     }
-        //   });
-        // } else if (count === 0) {
-        // } else {
-        // }
-        // count++;
       });
     }
   });
@@ -206,3 +293,29 @@ function loadingAnimation() {
 function loadingOutAnimation() {
   $("#preloader").fadeOut(500);
 }
+
+const historyBlock = ({ value, to, timestamp, event }) => `
+<li class="historyliTag">
+<div class="row">
+  <div class="col-9">
+    <div class="d-flex">
+      <div class="flex-grow-1">
+        <h3 class="mt-0 mb-1">${Number(value) / 100000000000000000} XRUN</h3>
+        <h5 class="mt-0 eventHTag">${event}</h5>
+        <p class="historyEle">to :${to}</p>
+        <p class="historyEle">time :${timestamp}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="verify">
+      <div class="verified">
+        <span>
+          <i class="la la-check"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<hr/>
+</li>`;

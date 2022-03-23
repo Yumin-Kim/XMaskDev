@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>XMASK</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon.png"
+    />
+    <style>
+      .section-padding {
+        padding-top: 50px;
+        padding-bottom: 0px !important;
+      }
+      .card-body-history {
+        padding: 10px;
+        height: 177px;
+        overflow-y: scroll;
+      }
+      .card-header {
+        padding: 14px !important;
+      }
+      .card-title {
+        font-size: 14px;
+      }
+      .historyEle {
+        max-width: 184px;
+        vertical-align: bottom;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: -0.3rem;
+      }
+
+      .eventHTag {
+        margin-bottom: -0.1rem !important;
+      }
+      .historyliTag {
+        margin-bottom: 18px;
+      }
+    </style>
+    <!-- Custom Stylesheet -->
+
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body style="width: 357px; background-color: white">
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+
+    <div id="main-wrapper" style="background-color: white; margin-top: 20px">
+      <div class="header landing_page" style="padding: 10px 0">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-12">
+              <nav
+                class="navbar navbar-expand-lg navbar-light px-0 justify-content-between"
+              >
+                <a class="navbar-brand"
+                  ><img src="./images/logo.png" alt="" /> <span>XRUN </span></a
+                >
+                <a class="page-back text-muted" href="" id="xm1030flushCache"
+                  ><span><i class="fa fa-angle-left"></i></span> logout</a
+                >
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="authincation section-padding">
+        <div class="container h-100">
+          <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-xl-5 col-md-6">
+              <div class="auth-form card" style="margin-bottom: 6px">
+                <div class="card-body">
+                  <!-- <h3 class="text-center">XRUN Wallet</h3> -->
+
+                  <div class="d-flex">
+                    <div style="text-align: center" class="flex-grow-1">
+                      <h2 class="mb-2" id="xruntoken"></h2>
+                      <h4 class="mb-2" id="id"></h4>
+                      <span class="mb-2" id="address"> </span>
+                      <!-- <p class="mb-1">
+                        <span
+                          ><i
+                            id="phonenumber"
+                            class="fa fa-phone me-2 text-primary"
+                          ></i
+                        ></span>
+                        +1 235 5547
+                      </p> -->
+                      <p class="mb-1" id="email">
+                        <span
+                          ><i class="fa fa-envelope me-2 text-primary"></i
+                        ></span>
+                        hello@example.com
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    class="social-icons"
+                    style="margin-top: 2px; text-align: center"
+                  >
+                    <a class="facebook text-center" href="javascript:void(0)"
+                      ><span
+                        ><i
+                          style="font-size: 19px; line-height: 28px"
+                          class="fa fa-exchange"
+                        ></i></span
+                    ></a>
+                  </div>
+                </div>
+                <!-- <div class="card-body">
+                  <div class="form">
+                    <ul class="linked_account">
+                      <li>
+                        <div class="row">
+                          <div class="col-9">
+                            <div class="d-flex">
+                              <span class="me-3"
+                                ><i class="fa fa-bank"></i
+                              ></span>
+                              <div class="flex-grow-1">
+                                <h5 class="mt-0 mb-1">Bank of America</h5>
+                                <p>Bank **************5421</p>
+                              </div>
+                              <div class="edit-option"></div>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="verify">
+                              <div class="verified">
+                                <span><i class="la la-check"></i></span>
+                                <a href="#">Verified</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="row">
+                          <div class="col-9">
+                            <div class="media my-4">
+                              <span class="me-3"
+                                ><i class="fa fa-cc-mastercard"></i
+                              ></span>
+                              <div class="flex-grow-1">
+                                <h5 class="mt-0 mb-1">Master Card</h5>
+                                <p>Credit Card *********5478</p>
+                              </div>
+                              <div class="edit-option">
+                                <a href="#"><i class="fa fa-eye"></i></a>
+                                <a href="#"><i class="fa fa-pencil"></i></a>
+                                <a href="#"><i class="fa fa-trash"></i></a>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="verify">
+                              <div class="verified">
+                                <span><i class="la la-check"></i></span>
+                                <a href="#">Verified</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="row">
+                          <div class="col-9">
+                            <div class="d-flex">
+                              <span class="me-3"
+                                ><i class="fa fa-credit-card"></i
+                              ></span>
+                              <div class="flex-grow-1">
+                                <h5 class="mt-0 mb-1">Debit Card</h5>
+                                <p>Prepaid Card *********5478</p>
+                              </div>
+                              <div class="edit-option">
+                                <a href="#"><i class="fa fa-eye"></i></a>
+                                <a href="#"><i class="fa fa-pencil"></i></a>
+                                <a href="#"><i class="fa fa-trash"></i></a>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="verify">
+                              <div class="not-verify">
+                                <span><i class="la la-close"></i></span>
+                                <a href="#">Not verified</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+
+                    <div class="mt-5">
+                      <a
+                        href="./verify-step-5.html"
+                        class="btn btn-primary px-4 me-3"
+                        >Add Bank Account</a
+                      >
+                      <a
+                        href="./verify-step-1.html"
+                        class="btn btn-success px-4"
+                        >Add Debit Account</a
+                      >
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+              <div class="auth-form card" style="height: 270px">
+                <div class="card-header">
+                  <h6 class="card-title">History</h6>
+                </div>
+                <div class="card-body card-body-history">
+                  <div class="form">
+                    <ul class="linked_account" id="historyList"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./vendor/jquery/jquery.min.js"></script>
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./js/scripts.js"></script>
+    <script src="js/WSocket.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/web3_method.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

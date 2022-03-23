@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
 
-  <body style="width: 357px; background-color: white">
+  <body style="width: 357px; height: 600px; background-color: white">
     <div id="preloader">
       <div class="sk-three-bounce">
         <div class="sk-child sk-bounce1"></div>
@@ -61,7 +61,6 @@
                       <input
                         type="text"
                         class="form-control text-center font-weight-bold"
-                        id="id"
                       />
                     </div>
                     <div class="mb-3">
@@ -69,18 +68,19 @@
                       <input
                         type="password"
                         class="form-control text-center font-weight-bold"
-                        id="pin"
                       />
                     </div>
-                    <div class="new-account mt-3">
-                      <p class="text-danger" id="xm1010alert"></p>
-                    </div>
                     <div class="text-center">
-                      <button id="xm1010btn" class="btn btn-success w-100">
-                        Sign in
+                      <button type="submit" class="btn btn-success w-100">
+                        Login
                       </button>
                     </div>
                   </form>
+                  <!-- <div class="info mt-3">
+                    <p class="text-muted">
+                      You dont recommended to save password to browsers!
+                    </p>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -93,9 +93,5 @@
     <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <script src="./js/scripts.js"></script>
-    <script src="js/WSocket.js"></script>
-    <script src="js/web3.min.js"></script>
-    <script src="js/web3_method.js"></script>
-    <script src="js/main.js"></script>
   </body>
 </html>
