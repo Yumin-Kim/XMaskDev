@@ -2,23 +2,125 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>XMask</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon.png"
+    />
+    <!-- Custom Stylesheet -->
+
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
+
   <body>
-    <h1>Signup</h1>
-    <form action="">
-        id : <input type="text" id="id" required /></form><br>
-      pwd : <input type="password" id="pin" required /></form><br>
-      email : <input type="email" id="email" /></form><br>
-      phone number : <input type="number" id="phoneNumber" /></form><br>
-      <input type="submit" id="loginSubmit" value="login">
-    </form>
-    <script src="js/chromeExtension.js"></script>
-    <script src="js/WSocket.js" ></script>
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+
+    <div id="main-wrapper">
+      <div class="authincation section-padding">
+        <div class="container h-100">
+          <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-xl-5 col-md-6">
+              <div class="mini-logo text-center my-5">
+                <a href="xm2000.html"><img src="./images/logo.png" alt="" /></a>
+              </div>
+              <div class="auth-form card">
+                <div class="card-header justify-content-center">
+                  <h4 class="card-title">Sign up your account</h4>
+                </div>
+                <div class="card-body">
+                  <a class="page-back text-muted" href="xmxm2000.html"
+                    ><span><i class="fa fa-angle-left"></i></span> Back</a
+                  >
+                  <form method="post" name="myform" class="signup_validate">
+                    <div class="mb-3">
+                      <label>ID</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="HelloXRUN"
+                        name="id"
+                        id="id"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        placeholder="XRUN@example.com"
+                        name="email"
+                        id="email"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label>Phone Number</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        placeholder="01023652134"
+                        name="phoneNumber"
+                        id="phoneNumber"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label>Password</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        placeholder="Password"
+                        name="pin"
+                        id="pin"
+                        required
+                      />
+                    </div>
+                    <div class="text-center mt-4">
+                      <button
+                        type="submit"
+                        id="xm2210btn"
+                        class="btn btn-success w-100"
+                      >
+                        Sign up
+                      </button>
+                    </div>
+                  </form>
+                  <div class="new-account mt-3">
+                    <p>
+                      Already have an account?
+                      <a class="text-primary" href="signin.html">Sign in</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./vendor/jquery/jquery.min.js"></script>
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./vendor/validator/jquery.validate.js"></script>
+    <script src="./vendor/validator/validator-init.js"></script>
+    <script src="./js/scripts.js"></script>
+
+    <script src="js/WSocket.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/web3_method.js"></script>
-    <script src="js/member.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
