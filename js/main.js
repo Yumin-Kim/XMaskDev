@@ -446,11 +446,13 @@ function xm3060_receipt(eth) {
   chrome.storage.local.get("receipt", ({ receipt }) => {
     chrome.storage.local.get("xmTransferValue", async ({ xmTransferValue }) => {
       const { timestamp } = await eth.getBlock(receipt.response.blockNumber);
+
       console.log(receipt);
       document.getElementById("value");
       document.getElementById("toAddress");
-      document.getElementById("remainValue");
-      document.getElementById("timestamp");
+      document.getElementById("remainValue").textContent =
+        document.getElementById("timestamp").textContent =
+          unixToDate(timestamp);
       document.getElementById("blockNumber").textContent =
         receipt.response.blockNumber;
     });
