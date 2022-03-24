@@ -1,12 +1,16 @@
 const webSocket = new NetworkTryObj("108.136.46.103", "5001");
-
+let mainnetAccountList;
 // page Refresh
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
 
-createWeb3(localIP)
+createWeb3(mainnetIP)
   .then(web3 => {
-    const { eth } = web3;
+    const { eth, utils } = web3;
+    getMainnetAccountList({ eth }).then(accounts => {
+      let mainnetAccount = accounts.map(v => v.toLowerCase());
+      chrome.storage.local.set({ mainnetAccount });
+    });
     let { pathname } = location;
     console.log(pathname);
     [pathname] = pathname.slice(1).split(".");
@@ -35,6 +39,22 @@ createWeb3(localIP)
         xm1030_mainPopup(eth);
         return;
       }
+      case "xm3010": {
+        xm3010_inputAddress(eth);
+        return;
+      }
+      case "xm3030": {
+        xm3030_inputBalance(eth);
+        return;
+      }
+      case "xm3050": {
+        xm3050_inputpassword(eth, utils);
+        return;
+      }
+      case "xm3060": {
+        xm3060_receipt(eth);
+        return;
+      }
       default:
         return;
     }
@@ -43,7 +63,8 @@ createWeb3(localIP)
 function xm1010_mainPopupSignin() {
   chrome.storage.local.get("xm1010", result => {
     if (Object.entries(result.xm1010.data).length !== 0) {
-      location.href = "xm1030.html";
+      // location.href = "xm3060.html";
+      location.href = "xm3060.html";
     }
   });
   document.getElementById("xm1010btn").addEventListener("click", function (e) {
@@ -80,52 +101,65 @@ function xm1010_mainPopupSignin() {
     }
   });
 }
+
 function xm1030_mainPopup(eth) {
-  chrome.storage.local.get("xm1010", result => {
-    console.log(result.xm1010);
-    document.getElementById("address").textContent = result.xm1010.data.address;
-    document.getElementById("id").textContent = result.xm1010.data.id;
-    // getXRUNTokenBalanceOf({ address: result.xm1010.data.address, eth }).then(
-    getXRUNTokenBalanceOf({
-      address: "0x337f7e35f833a3be049bf2da6099cb33040dba68",
+  chrome.storage.local.get("xm1010", localStorageData => {
+    chrome.storage.local.set({ xmTransferAddress: "" });
+    chrome.storage.local.set({
+      xmTransferValue: {},
+    });
+    userBaseWalletInfo({
+      address: localStorageData.xm1010.data.address,
+      id: localStorageData.xm1010.data.id,
+      email: localStorageData.xm1010.data.email,
       eth,
-    }).then(balance => {
-      console.log(balance);
-      if (balance.trim() !== "") {
-        document.getElementById("xruntoken").textContent =
-          Number(balance) / 100000000000000000 + " XRUN";
-      } else {
-        document.getElementById("xruntoken").textContent = "0 XRUN";
-      }
     });
     topics = [
       null,
-      // `0x000000000000000000000000${result.xm1010.data.address.slice(2)}`,
-      `0x000000000000000000000000337f7e35f833a3be049bf2da6099cb33040dba68`,
+      `0x000000000000000000000000${localStorageData.xm1010.data.address.slice(
+        2
+      )}`,
+      // `0x000000000000000000000000337f7e35f833a3be049bf2da6099cb33040dba68`,
     ];
 
-    getContractPastEvents({ topics, eth }).then(async data => {
-      const a = await data.reduce(async (prev, cur, index) => {
-        const { returnValues, event } = cur;
-        const prevData = await prev.then();
-        const { timestamp } = await eth.getBlock(cur.blockNumber);
+    getContractPastEvents({ topics, eth }).then(async contractGetLog => {
+      let historyInnerHTML;
+      if (contractGetLog.length !== 0) {
+        const contractList = contractGetLog.reverse();
+        const historyArray = await contractList.reduce(
+          async (prev, cur, index) => {
+            const { returnValues, event } = cur;
+            const prevData = await prev.then();
+            const { timestamp } = await eth.getBlock(cur.blockNumber);
 
-        return Promise.resolve([
-          ...prevData,
-          historyBlock({
-            value: returnValues[2],
-            to: returnValues[1],
-            timestamp: unixToDate(timestamp),
-            event,
-          }),
-        ]);
-      }, Promise.resolve([]));
-      const b = a.join(",").replaceAll(",", "");
-      document.getElementById("historyList").innerHTML = b;
-      if (data.length !== 0) {
-        /////
+            return Promise.resolve([
+              ...prevData,
+              historyBlock({
+                value: returnValues[2],
+                to: returnValues[1],
+                timestamp: unixToDate(timestamp),
+                event,
+              }),
+            ]);
+          },
+          Promise.resolve([])
+        );
+        historyInnerHTML = historyArray.join(",").replaceAll(",", "");
       } else {
+        historyInnerHTML = `<li class="historyliTag">
+                        <div class="row">
+                          <div class="col-9">
+                            <div class="d-flex">
+                              <div class="flex-grow-1">
+                                <h4 class="mt-0 mb-1">No Data...</h4>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                      </li>`;
       }
+      document.getElementById("historyList").innerHTML = historyInnerHTML;
     });
   });
   document.getElementById("xm1030flushCache").addEventListener("click", e => {
@@ -272,6 +306,156 @@ function xm2230_downloadKeyFile() {
     });
   });
 }
+function xm3010_inputAddress(eth) {
+  chrome.storage.local.get("xm1010", localStorageData => {
+    userBaseWalletInfo({
+      address: localStorageData.xm1010.data.address,
+      id: localStorageData.xm1010.data.id,
+      email: localStorageData.xm1010.data.email,
+      eth,
+    });
+  });
+  document.getElementById("xm3010btn").addEventListener("click", () => {
+    chrome.storage.local.get("mainnetAccount", ({ mainnetAccount }) => {
+      const sendToAddress = document
+        .getElementById("sendAddress")
+        .value.toLowerCase();
+      if (mainnetAccount.includes(sendToAddress)) {
+        chrome.storage.local.set({ xmTransferAddress: sendToAddress });
+        location.href = "xm3030.html";
+      } else {
+        document.getElementById("xm3010alert").textContent =
+          "Not found to address in XRUN Mainnet ";
+      }
+    });
+  });
+  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+    chrome.storage.local.clear(() => {
+      location.href = "xm1010.html";
+    });
+  });
+}
+function xm3030_inputBalance(eth) {
+  chrome.storage.local.get("xm1010", localStorageData => {
+    userBaseWalletInfo({
+      address: localStorageData.xm1010.data.address,
+      id: localStorageData.xm1010.data.id,
+      email: localStorageData.xm1010.data.email,
+      eth,
+    });
+  });
+  document.getElementById("xm3030btn").addEventListener("click", () => {
+    const value = document.getElementById("sendBalance").value;
+    const memberBalanceOf = document.getElementById("xruntoken").innerText;
+    document.getElementById("xm3030alert").textContent = "";
+    if (isNaN(Number(value))) {
+      document.getElementById("xm3030alert").textContent =
+        "숫자를 입력해주세요";
+      document.getElementById("sendBalance").value = "";
+    } else {
+      if (Number(memberBalanceOf.replace(" XRUN", "")) - Number(value) >= 0) {
+        chrome.storage.local.set({
+          xmTransferValue: {
+            value: Number(value) * 100000000000000000,
+            remainValue:
+              Number(memberBalanceOf.replace(" XRUN", "")) - Number(value),
+          },
+        });
+        location.href = "xm3050.html";
+      } else {
+        document.getElementById("sendBalance").value = "";
+        document.getElementById("xm3030alert").textContent = "잔액 부족";
+      }
+    }
+  });
+  document.getElementById("xmTransfer").addEventListener("click", () => {
+    chrome.storage.local.set({ xmTransferAddress: "" });
+    location.href = "xm3010.html";
+  });
+  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+    chrome.storage.local.clear(() => {
+      location.href = "xm1010.html";
+    });
+  });
+}
+function xm3050_inputpassword(eth, utils) {
+  chrome.storage.local.get("xm1010", ({ xm1010 }) => {
+    chrome.storage.local.get("xmTransferAddress", ({ xmTransferAddress }) => {
+      chrome.storage.local.get("xmTransferValue", ({ xmTransferValue }) => {
+        document.getElementById("toAddress").textContent = xmTransferAddress;
+        document.getElementById(
+          "remainValue"
+        ).textContent = `${xmTransferValue.remainValue} XRUN`;
+        document.getElementById("value").textContent = `${
+          xmTransferValue.value / 100000000000000000
+        } XRUN`;
+        document.getElementById("xm3050btn").addEventListener("click", e => {
+          const pin = document.getElementById("pin").value;
+          document.getElementById("xm3050alert").textContent = "";
+          if (pin.trim() != "") {
+            loadingAnimation();
+            webSocket.webSocketInit(async socket => {
+              const memberInfo = {};
+              memberInfo.member = xm1010.data.member;
+              memberInfo.pin = pin;
+              const response = await webSocket.sendMsgToSocket([
+                "xm3050",
+                JSON.stringify(memberInfo),
+              ]);
+              console.log(response);
+              if (response.code === 9102) {
+                walletContractTokenTransfer({
+                  utils,
+                  eth,
+                  toAddress: xmTransferAddress,
+                  pin,
+                  fromAddress: xm1010.data.address,
+                  value: xmTransferValue.value,
+                }).then(response => {
+                  console.log(response);
+                  loadingOutAnimation();
+                  chrome.storage.local.set({ receipt: response });
+                  location.href = "xm3060.html";
+                });
+              } else {
+                loadingOutAnimation();
+                document.getElementById("xm3050alert").textContent =
+                  "비밀번호 불일치";
+                document.getElementById("pin").value = "";
+              }
+            });
+          } else {
+            document.getElementById("xm3050alert").textContent =
+              "비밀번호 입력";
+            document.getElementById("pin").value = "";
+          }
+        });
+      });
+    });
+  });
+  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+    chrome.storage.local.clear(() => {
+      location.href = "xm1010.html";
+    });
+  });
+}
+function xm3060_receipt(eth) {
+  document.getElementById("home").addEventListener("click", () => {
+    location.href = "xm1030.html";
+  });
+  chrome.storage.local.get("receipt", ({ receipt }) => {
+    chrome.storage.local.get("xmTransferValue", async ({ xmTransferValue }) => {
+      const { timestamp } = await eth.getBlock(receipt.response.blockNumber);
+      console.log(receipt);
+      document.getElementById("value");
+      document.getElementById("toAddress");
+      document.getElementById("remainValue");
+      document.getElementById("timestamp");
+      document.getElementById("blockNumber").textContent =
+        receipt.response.blockNumber;
+    });
+  });
+}
 function saveToFile_Chrome(fileName, content) {
   var blob = new Blob([content], { type: "text/plain" });
   objURL = window.URL.createObjectURL(blob);
@@ -319,3 +503,17 @@ const historyBlock = ({ value, to, timestamp, event }) => `
 </div>
 <hr/>
 </li>`;
+
+function userBaseWalletInfo({ address, email, id, eth }) {
+  document.getElementById("address").textContent = address;
+  document.getElementById("id").textContent = id;
+  document.getElementById("email").textContent = email;
+  getXRUNTokenBalanceOf({ address: address, eth }).then(balance => {
+    if (balance.trim() !== "") {
+      document.getElementById("xruntoken").textContent =
+        Number(balance) / 100000000000000000 + " XRUN";
+    } else {
+      document.getElementById("xruntoken").textContent = "0 XRUN";
+    }
+  });
+}

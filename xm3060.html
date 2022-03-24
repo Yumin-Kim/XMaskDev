@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>XMASK</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon.png"
+    />
+    <style>
+      .form-control {
+        font-size: 13px !important;
+      }
+      .section-padding {
+        padding-top: 50px;
+        padding-bottom: 0px !important;
+      }
+      .card-body-history {
+        padding: 10px;
+        height: 177px;
+        overflow-y: scroll;
+      }
+      .card-header {
+        padding: 14px !important;
+      }
+      .card-title {
+        font-size: 14px;
+      }
+      .historyEle {
+        max-width: 125px;
+        vertical-align: bottom;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .eventHTag {
+        margin-bottom: -0.1rem !important;
+      }
+      .historyliTag {
+        margin-bottom: 18px;
+      }
+    </style>
+    <!-- Custom Stylesheet -->
+
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body style="width: 357px; background-color: white">
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+
+    <div id="main-wrapper" style="background-color: white; margin-top: 20px">
+      <div class="header landing_page" style="padding: 10px 0">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-12">
+              <nav
+                class="navbar navbar-expand-lg navbar-light px-0 justify-content-between"
+              >
+                <a class="navbar-brand"
+                  ><img src="./images/logo.png" alt="" /> <span>XRUN </span></a
+                >
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="authincation section-padding">
+        <div class="container h-100">
+          <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="card auth-form">
+                <div class="card-header">
+                  <h4 class="card-title">Receipt</h4>
+                </div>
+                <div class="card-body">
+                  <span>Transfer Balance</span>
+                  <h3 id="value">10 XRUN</h3>
+
+                  <div class="d-flex justify-content-between my-4">
+                    <div class="historyEle">
+                      <p class="mb-1">To Address</p>
+                      <h4 class="historyEle" id="toAddress">
+                        0xbdc333429BffD37C27fF31Dd8B41ae1B99E2e887
+                      </h4>
+                    </div>
+                    <div>
+                      <p class="mb-1">Remaining balance</p>
+                      <h4 id="remainValue">10 XRUN</h4>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between my-4">
+                    <div class="historyEle">
+                      <p class="mb-1">Time</p>
+                      <h4 class="timestamp" id="time">
+                        0xbdc333429BffD37C27fF31Dd8B41ae1B99E2e887
+                      </h4>
+                    </div>
+                    <div>
+                      <p class="mb-1">blockNumber</p>
+                      <h4 id="blockNumber">10 XRUN</h4>
+                    </div>
+                  </div>
+                  <div class="text-center" id="home">
+                    <button class="btn btn-success w-100">Home</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="row">
+                    <div class="col-9">
+                      <div class="d-flex">
+                        <div class="flex-grow-1">
+                          <h5 class="mt-0 eventHTag">Transfer</h5>
+                          <h3 class="mt-0 mb-1">10000 XRUN</h3>
+                          <p class="historyEle">to :${to}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
+    <script src="./vendor/jquery/jquery.min.js"></script>
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./js/scripts.js"></script>
+    <script src="js/WSocket.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/web3_method.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

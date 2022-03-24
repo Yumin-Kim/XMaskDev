@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>XMASK</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon.png"
+    />
+    <style>
+      .form-control {
+        font-size: 13px !important;
+      }
+      .section-padding {
+        padding-top: 50px;
+        padding-bottom: 0px !important;
+      }
+      .card-body-history {
+        padding: 10px;
+        height: 177px;
+        overflow-y: scroll;
+      }
+      .card-header {
+        padding: 14px !important;
+      }
+      .card-title {
+        font-size: 14px;
+      }
+      .historyEle {
+        max-width: 184px;
+        vertical-align: bottom;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: -0.3rem;
+      }
+
+      .eventHTag {
+        margin-bottom: -0.1rem !important;
+      }
+      .historyliTag {
+        margin-bottom: 18px;
+      }
+    </style>
+    <!-- Custom Stylesheet -->
+
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body style="width: 357px; background-color: white">
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+
+    <div id="main-wrapper" style="background-color: white; margin-top: 20px">
+      <div class="header landing_page" style="padding: 10px 0">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-12">
+              <nav
+                class="navbar navbar-expand-lg navbar-light px-0 justify-content-between"
+              >
+                <a class="navbar-brand"
+                  ><img src="./images/logo.png" alt="" /> <span>XRUN </span></a
+                >
+                <a class="page-back text-muted" href="" id="xm1030flushCache"
+                  ><span><i class="fa fa-angle-left"></i></span> logout</a
+                >
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="authincation section-padding">
+        <div class="container h-100">
+          <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-xl-5 col-md-6">
+              <div class="auth-form card" style="margin-bottom: 6px">
+                <div class="card-body">
+                  <!-- <h3 class="text-center">XRUN Wallet</h3> -->
+
+                  <div class="d-flex">
+                    <div style="text-align: center" class="flex-grow-1">
+                      <h2 class="mb-2" id="xruntoken"></h2>
+                      <h4 class="mb-2" id="id"></h4>
+                      <span class="mb-2" id="address"> </span>
+
+                      <!-- <p class="mb-1">
+                        <span
+                          ><i
+                            id="phonenumber"
+                            class="fa fa-phone me-2 text-primary"
+                          ></i
+                        ></span>
+                        +1 235 5547
+                      </p> -->
+                      <p class="mb-1" id="email">
+                        <span
+                          ><i class="fa fa-envelope me-2 text-primary"></i
+                        ></span>
+                      </p>
+                    </div>
+                  </div>
+                  <!-- <div
+                    class="social-icons"
+                    style="margin-top: 2px; text-align: center"
+                  >
+                    <a class="facebook text-center" href="xm3010.html"
+                      ><span
+                        ><i
+                          style="font-size: 19px; line-height: 28px"
+                          class="fa fa-exchange"
+                        ></i></span
+                    ></a>
+                  </div> -->
+                </div>
+              </div>
+              <div class="auth-form card" style="height: 270px">
+                <div class="card-header">
+                  <h6 class="card-title">Transfer Balance</h6>
+                  <a
+                    class="page-back text-muted"
+                    style="margin-bottom: 0px"
+                    id="xmTransfer"
+                    ><span><i class="fa fa-angle-left"></i></span> Back</a
+                  >
+                </div>
+                <div class="card-body card-body-history">
+                  <div class="mb-3">
+                    <input
+                      type="text"
+                      minlength="1"
+                      class="form-control text-center font-weight-bold"
+                      placeholder="100"
+                      id="sendBalance"
+                    />
+                  </div>
+                  <div class="new-account mt-3">
+                    <p class="text-danger" id="xm3030alert"></p>
+                  </div>
+                  <div class="text-center">
+                    <button id="xm3030btn" class="btn btn-success w-100">
+                      Transfer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./vendor/jquery/jquery.min.js"></script>
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./js/scripts.js"></script>
+    <script src="js/WSocket.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/web3_method.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

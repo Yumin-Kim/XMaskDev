@@ -2,7 +2,8 @@ const mainnetIP = "http://108.136.46.103:5006";
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
 const xrunContractAddress = "0x965e7662f2267348e30dD9B408AD4b469CFE1596";
-
+const minerAddresss = "0xbdc834d959b90e307A81782E7ca94F16b49C4E0B";
+const minerPassword = "TnkGg8j3SzkXSkD";
 const ERC20_abi = [
   {
     inputs: [
@@ -399,6 +400,59 @@ async function getXRUNTokenBalanceOf({ address, eth }) {
   const contract = await new eth.Contract(ERC20_abi, xrunContractAddress);
   return await contract.methods.balanceOf(address).call();
 }
+
+async function getMainnetAccountList({ eth }) {
+  return await eth.getAccounts();
+}
+
+async function walletContractTokenTransfer({
+  utils,
+  eth,
+  toAddress,
+  fromAddress,
+  value,
+  pin,
+}) {
+  const contract = await new eth.Contract(ERC20_abi, xrunContractAddress);
+  let responseWeb3 = {};
+  try {
+    const prev1 = await eth.getBalance(minerAddresss);
+    const prev2 = await eth.getBalance(fromAddress);
+    console.log("prev1", prev1);
+    console.log("prev2", prev2);
+    console.log("=================================");
+    console.time("walletContractTokenTransfer");
+    await eth.personal.unlockAccount(minerAddresss, minerPassword);
+    await eth.sendTransaction({
+      from: minerAddresss,
+      to: fromAddress,
+      value: utils.toWei(String(0.01), `ether`),
+    });
+    await eth.personal.unlockAccount(fromAddress, pin);
+    const response = await contract.methods
+      .transfer(toAddress, String(value))
+      .send({
+        from: fromAddress,
+      });
+    console.log("=================================");
+    console.log(response);
+    const cur1 = await eth.getBalance(minerAddresss);
+    const cur2 = await eth.getBalance(fromAddress);
+    console.log("cur1", cur1);
+    console.log("cur2", cur2);
+    console.timeEnd("walletContractTokenTransfer");
+    responseWeb3.response = response;
+    responseWeb3.message = "success";
+    responseWeb3.code = 9102;
+    return responseWeb3;
+  } catch (error) {
+    responseWeb3.message = "failure";
+    responseWeb3.code = 9101;
+    console.log(error);
+    return responseWeb3;
+  }
+}
+
 function unixToDate(date) {
   var time = new Date(date * 1000),
     month = time.getMonth() + 1,
