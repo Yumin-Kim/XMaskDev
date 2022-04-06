@@ -1,4 +1,7 @@
-const mainnetIP = "http://108.136.46.103:5006";
+// const mainnetIP = "http://108.136.46.103:5006";
+// const mainnetIP = "http://108.136.225.219:5006";
+const mainnetIP = "http://108.136.230.81:5006";
+
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
 const xrunContractAddress = "0x965e7662f2267348e30dD9B408AD4b469CFE1596";
