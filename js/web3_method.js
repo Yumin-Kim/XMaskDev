@@ -1,6 +1,6 @@
-// const mainnetIP = "http://108.136.46.103:5006";
+const mainnetIP = "http://108.136.46.103:5006";
 // const mainnetIP = "http://108.136.225.219:5006";
-const mainnetIP = "http://108.136.230.81:5006";
+// const mainnetIP = "http://108.136.230.81:5006";
 
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
@@ -419,12 +419,6 @@ async function walletContractTokenTransfer({
   const contract = await new eth.Contract(ERC20_abi, xrunContractAddress);
   let responseWeb3 = {};
   try {
-    const prev1 = await eth.getBalance(minerAddresss);
-    const prev2 = await eth.getBalance(fromAddress);
-    console.log("prev1", prev1);
-    console.log("prev2", prev2);
-    console.log("=================================");
-    console.time("walletContractTokenTransfer");
     await eth.personal.unlockAccount(minerAddresss, minerPassword);
     await eth.sendTransaction({
       from: minerAddresss,
@@ -437,21 +431,14 @@ async function walletContractTokenTransfer({
       .send({
         from: fromAddress,
       });
-    console.log("=================================");
-    console.log(response);
-    const cur1 = await eth.getBalance(minerAddresss);
-    const cur2 = await eth.getBalance(fromAddress);
-    console.log("cur1", cur1);
-    console.log("cur2", cur2);
-    console.timeEnd("walletContractTokenTransfer");
     responseWeb3.response = response;
     responseWeb3.message = "success";
     responseWeb3.code = 9102;
     return responseWeb3;
   } catch (error) {
     responseWeb3.message = "failure";
+    responseWeb3.log = error;
     responseWeb3.code = 9101;
-    console.log(error);
     return responseWeb3;
   }
 }

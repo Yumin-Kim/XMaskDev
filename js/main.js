@@ -19,6 +19,9 @@ createWeb3(mainnetIP)
         xm2110_signinFunction();
         return;
       }
+      case "xm2120": {
+        xm2120_requestEmail();
+      }
       case "xm2210": {
         xm2210_signupFunction(eth);
         return;
@@ -68,8 +71,6 @@ function xm1010_mainPopupSignin() {
   chrome.storage.local.get("xm1010", result => {
     if (Object.entries(result.xm1010.data).length !== 0) {
       location.href = "xm1030.html";
-      // location.href = "xm3060.html";
-      // location.href = "xm3060.html";
     }
   });
   document.getElementById("xm1010btn").addEventListener("click", function (e) {
@@ -119,41 +120,76 @@ function xm1030_mainPopup(eth) {
       email: localStorageData.xm1010.data.email,
       eth,
     });
-    topics = [
+    let topics = [
       null,
       `0x000000000000000000000000${localStorageData.xm1010.data.address.slice(
         2
       )}`,
-      // `0x000000000000000000000000337f7e35f833a3be049bf2da6099cb33040dba68`,
     ];
     getContractPastEvents({ topics, eth })
-      .then(async contractGetLog => {
-        let historyInnerHTML;
-        if (contractGetLog.length !== 0) {
-          const contractList = contractGetLog.reverse();
-          const historyArray = await contractList.reduce(
-            async (prev, cur, index) => {
-              const { returnValues, event } = cur;
-              const prevData = await prev.then();
-              const { timestamp } = await eth.getBlock(cur.blockNumber);
-
-              return Promise.resolve([
-                ...prevData,
-                historyBlock({
-                  value: exponentionToValue(
-                    Number(returnValues[2]) / 100000000000000000
-                  ),
-                  to: returnValues[1],
-                  timestamp: unixToDate(timestamp),
-                  event,
-                }),
-              ]);
-            },
-            Promise.resolve([])
-          );
-          historyInnerHTML = historyArray.join(",").replaceAll(",", "");
-        } else {
-          historyInnerHTML = `<li class="historyliTag">
+      .then(fromGetPastEventResult => {
+        const topics = [
+          null,
+          null,
+          `0x000000000000000000000000${localStorageData.xm1010.data.address.slice(
+            2
+          )}`,
+        ];
+        getContractPastEvents({ topics, eth }).then(
+          async toGetPastEventResult => {
+            let memberPastEventResultArray = [];
+            if (fromGetPastEventResult.length !== 0) {
+              memberPastEventResultArray = [...fromGetPastEventResult];
+            }
+            let historyInnerHTML;
+            if (toGetPastEventResult.length !== 0) {
+              memberPastEventResultArray = [
+                ...memberPastEventResultArray,
+                ...toGetPastEventResult,
+              ];
+              memberPastEventResultArray.sort(function (a, b) {
+                if (a.blockNumber > b.blockNumber) {
+                  return 1;
+                }
+                if (a.blockNumber < b.blockNumber) {
+                  return -1;
+                }
+                return 0;
+              });
+              const contractList = memberPastEventResultArray.reverse();
+              const historyArray = await contractList.reduce(
+                async (prev, cur, index) => {
+                  const { returnValues, event } = cur;
+                  const prevData = await prev.then();
+                  const { timestamp } = await eth.getBlock(cur.blockNumber);
+                  return Promise.resolve([
+                    ...prevData,
+                    historyBlock({
+                      value: exponentionToValue(
+                        Number(returnValues[2]) / 100000000000000000
+                      ),
+                      from: returnValues[0],
+                      to: returnValues[1],
+                      timestamp: unixToDate(timestamp),
+                      event,
+                      fromMember:
+                        localStorageData.xm1010.data.address.toLocaleLowerCase() ===
+                        returnValues[0].toLocaleLowerCase()
+                          ? true
+                          : false,
+                      toMember:
+                        localStorageData.xm1010.data.address.toLocaleLowerCase() ===
+                        returnValues[1].toLocaleLowerCase()
+                          ? true
+                          : false,
+                    }),
+                  ]);
+                },
+                Promise.resolve([])
+              );
+              historyInnerHTML = historyArray.join(",").replaceAll(",", "");
+            } else {
+              historyInnerHTML = `<li class="historyliTag">
                         <div class="row">
                           <div class="col-9">
                             <div class="d-flex">
@@ -165,8 +201,10 @@ function xm1030_mainPopup(eth) {
                         </div>
                         <hr />
                       </li>`;
-        }
-        document.getElementById("historyList").innerHTML = historyInnerHTML;
+            }
+            document.getElementById("historyList").innerHTML = historyInnerHTML;
+          }
+        );
       })
       .finally(() => {});
   });
@@ -210,7 +248,26 @@ function xm2110_signinFunction() {
     }
   });
 }
-
+function xm2120_requestEmail() {
+  chrome.storage.local.get("xm2110", ({ xm2110 }) => {
+    console.log(xm2110);
+    webSocket.webSocketInit(async socket => {
+      const memberInfo = {};
+      memberInfo.id = xm2110.id;
+      memberInfo.pin = xm2110.pin;
+      memberInfo.email = xm2110.email;
+      memberInfo.member = xm2110.member;
+      const data = await webSocket.sendMsgToSocket([
+        "xm2221_request",
+        JSON.stringify(memberInfo),
+      ]);
+      if (data.code === 9102) {
+        chrome.storage.local.set({ xm2210: data });
+        location.href = "xm2220.html";
+      }
+    });
+  });
+}
 function xm2210_signupFunction() {
   document.getElementById("xm2210btn").addEventListener("click", function (e) {
     e.preventDefault();
@@ -301,12 +358,25 @@ function xm2230_downloadKeyFile() {
         console.log(respose);
         if (respose.code === 9102) {
           const { data } = respose;
+          console.log(
+            data.filename
+              .split("/")
+              [data.filename.split("/").length - 1].substring(
+                0,
+                data.filename.length - 2
+              )
+          );
           saveToFile_Chrome(
-            data.filename.split("/")[data.filename.split("/").length - 1],
+            data.filename
+              .split("/")
+              [data.filename.split("/").length - 1].substring(
+                0,
+                data.filename.length - 2
+              ),
             data.filedata
           );
           loadingOutAnimation();
-          location.href = "about.html";
+          // location.href = "xm1100.html";
         } else {
           document.getElementById("xm2110alert").textContent = "서버 오류";
         }
@@ -459,6 +529,10 @@ function xm3060_receipt(eth) {
   });
   chrome.storage.local.get("receipt", ({ receipt }) => {
     chrome.storage.local.get("xmTransferValue", async ({ xmTransferValue }) => {
+      console.log(receipt);
+      // if (receipt.code === 9101) {
+      //   location.href = "xm3070.html";
+      // }
       const { timestamp } = await eth.getBlock(receipt.response.blockNumber);
       const balance = receipt.response.events.Transfer.returnValues[2];
       document.getElementById("value").textContent =
@@ -473,9 +547,12 @@ function xm3060_receipt(eth) {
   });
 }
 function xm3070_failureReceipt() {
-  xm1010_mainPopupSignin();
+  document.getElementById("home").addEventListener("click", () => {
+    location.href = "xm1030.html";
+  });
 }
 function saveToFile_Chrome(fileName, content) {
+  console.log(fileName);
   var blob = new Blob([content], { type: "text/plain" });
   objURL = window.URL.createObjectURL(blob);
 
@@ -485,7 +562,9 @@ function saveToFile_Chrome(fileName, content) {
   }
   window.__Xr_objURL_forCreatingFile__ = objURL;
   var a = document.createElement("a");
-  a.download = fileName;
+  console.log(fileName);
+  console.log(objURL);
+  a.download = fileName.slice(0, fileName.length - 2);
   a.href = objURL;
   a.click();
 }
@@ -497,7 +576,15 @@ function loadingOutAnimation() {
   $("#preloader").fadeOut(500);
 }
 
-const historyBlock = ({ value, to, timestamp, event }) => `
+const historyBlock = ({
+  value,
+  to,
+  from,
+  timestamp,
+  event,
+  fromMember,
+  toMember,
+}) => `
 <li class="historyliTag">
 <div class="row">
   <div class="col-9">
@@ -505,7 +592,8 @@ const historyBlock = ({ value, to, timestamp, event }) => `
       <div class="flex-grow-1">
         <h3 class="mt-0 mb-1">${value} XRUN</h3>
         <h5 class="mt-0 eventHTag">${event}</h5>
-        <p class="historyEle">to :${to}</p>
+        <p class="historyEle ${fromMember ? "bold" : null}">from :${from}</p>
+        <p class="historyEle ${toMember ? "bold" : null}">to :${to}</p>
         <p class="historyEle">time :${timestamp}</p>
       </div>
     </div>
@@ -531,13 +619,12 @@ function exponentionToValue(value) {
     if (value.toFixed(18).replaceAll("0", "") === ".") {
       memberBalance = "0";
     } else {
-      memberBalance = value.toFixed(18);
+      memberBalance = value.toFixed(3);
     }
   } else {
     // 정수인 경우
     memberBalance = value.toFixed(18).split(".")[0];
   }
-  console.log(memberBalance);
   return memberBalance;
 }
 
@@ -546,6 +633,7 @@ function userBaseWalletInfo({ address, email, id, eth }) {
   document.getElementById("id").textContent = id;
   document.getElementById("email").textContent = email;
   getXRUNTokenBalanceOf({ address: address, eth }).then(balance => {
+    console.log(balance);
     if (balance.trim() !== "") {
       document.getElementById("xruntoken").textContent =
         exponentionToValue(Number(balance) / 100000000000000000) + " XRUN";
