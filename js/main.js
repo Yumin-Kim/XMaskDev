@@ -69,8 +69,10 @@ createWeb3(mainnetIP)
   .catch(() => {});
 function xm1010_mainPopupSignin() {
   chrome.storage.local.get("xm1010", result => {
-    if (Object.entries(result.xm1010.data).length !== 0) {
-      location.href = "xm1030.html";
+    if (result.xm1010 !== undefined) {
+      if (Object.entries(result.xm1010.data).length !== 0) {
+        location.href = "xm1030.html";
+      }
     }
   });
   document.getElementById("xm1010btn").addEventListener("click", function (e) {
@@ -95,7 +97,8 @@ function xm1010_mainPopupSignin() {
         console.log(response);
         if (response.code === 9102) {
           chrome.storage.local.set({ xm1010: response });
-          location.href = "xm1020.html";
+          // location.href = "xm1020.html";
+          location.href = "xm1030.html";
         } else {
           loadingOutAnimation();
           document.getElementById("xm1010alert").textContent =
@@ -236,7 +239,8 @@ function xm2110_signinFunction() {
         ]);
         if (data.code === 9102) {
           chrome.storage.local.set({ xm2110: data });
-          location.href = "xm2120.html";
+          // location.href = "xm2120.html";
+          location.href = "xm1100.html";
         } else {
           loadingOutAnimation();
           document.getElementById("xm2110alert").textContent =
@@ -263,7 +267,9 @@ function xm2120_requestEmail() {
       ]);
       if (data.code === 9102) {
         chrome.storage.local.set({ xm2210: data });
-        location.href = "xm2220.html";
+        // 0412 verifiy email
+        // location.href = "xm2220.html";
+        location.href = "xm1100.html";
       }
     });
   });
@@ -297,7 +303,8 @@ function xm2210_signupFunction() {
         ]);
         if (data.code === 9102) {
           chrome.storage.local.set({ xm2210: data });
-          location.href = "xm2220.html";
+          // location.href = "xm2220.html";
+          location.href = "xm1100.html";
         }
       });
     }
@@ -358,14 +365,6 @@ function xm2230_downloadKeyFile() {
         console.log(respose);
         if (respose.code === 9102) {
           const { data } = respose;
-          console.log(
-            data.filename
-              .split("/")
-              [data.filename.split("/").length - 1].substring(
-                0,
-                data.filename.length - 2
-              )
-          );
           saveToFile_Chrome(
             data.filename
               .split("/")
@@ -376,6 +375,7 @@ function xm2230_downloadKeyFile() {
             data.filedata
           );
           loadingOutAnimation();
+          location.href = "xm1100.html";
           // location.href = "xm1100.html";
         } else {
           document.getElementById("xm2110alert").textContent = "서버 오류";
