@@ -427,7 +427,7 @@ async function walletContractTokenTransfer({
     });
     await eth.personal.unlockAccount(fromAddress, pin);
     const response = await contract.methods
-      .transfer(toAddress, String(value))
+      .transfer(toAddress, utils.toWei(value, "ether"))
       .send({
         from: fromAddress,
       });

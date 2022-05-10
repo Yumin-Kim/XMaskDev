@@ -3,10 +3,11 @@ let mainnetAccountList;
 // page Refresh
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
-
+let utils;
 createWeb3(mainnetIP)
   .then(web3 => {
-    const { eth, utils } = web3;
+    const { eth } = web3;
+    utils = web3.utils;
     getMainnetAccountList({ eth }).then(accounts => {
       let mainnetAccount = accounts.map(v => v.toLowerCase());
       chrome.storage.local.set({ mainnetAccount });
@@ -168,9 +169,7 @@ function xm1030_mainPopup(eth) {
                   return Promise.resolve([
                     ...prevData,
                     historyBlock({
-                      value: exponentionToValue(
-                        Number(returnValues[2]) / 100000000000000000
-                      ),
+                      value: exponentionToValue(returnValues[2]),
                       from: returnValues[0],
                       to: returnValues[1],
                       timestamp: unixToDate(timestamp),
@@ -432,9 +431,12 @@ function xm3030_inputBalance(eth) {
       document.getElementById("sendBalance").value = "";
     } else {
       if (Number(memberBalanceOf.replace(" XRUN", "")) - Number(value) >= 0) {
+        console.log(value);
+        console.log(memberBalanceOf);
+        console.log(value);
         chrome.storage.local.set({
           xmTransferValue: {
-            value: Number(value) * 100000000000000000,
+            value,
             remainValue:
               Number(memberBalanceOf.replace(" XRUN", "")) - Number(value),
           },
@@ -464,9 +466,9 @@ function xm3050_inputpassword(eth, utils) {
         document.getElementById(
           "remainValue"
         ).textContent = `${xmTransferValue.remainValue} XRUN`;
-        document.getElementById("value").textContent = `${
-          xmTransferValue.value / 100000000000000000
-        } XRUN`;
+        document.getElementById(
+          "value"
+        ).textContent = `${xmTransferValue.value} XRUN`;
         document.getElementById("xm3050btn").addEventListener("click", e => {
           const pin = document.getElementById("pin").value;
           document.getElementById("xm3050alert").textContent = "";
@@ -534,10 +536,11 @@ function xm3060_receipt(eth) {
       //   location.href = "xm3070.html";
       // }
       const { timestamp } = await eth.getBlock(receipt.response.blockNumber);
-      const balance = receipt.response.events.Transfer.returnValues[2];
+      const { 1: toAddress, 2: balance } =
+        receipt.response.events.Transfer.returnValues;
       document.getElementById("value").textContent =
-        exponentionToValue(Number(balance) / 100000000000000000) + " XRUN";
-      document.getElementById("toAddress").textContent = receipt.response.to;
+        exponentionToValue(balance) + " XRUN";
+      document.getElementById("toAddress").textContent = toAddress;
       document.getElementById("remainValue").textContent =
         xmTransferValue.remainValue + " XRUN";
       document.getElementById("timestamp").textContent = unixToDate(timestamp);
@@ -611,20 +614,10 @@ const historyBlock = ({
 <hr/>
 </li>`;
 
+// fromWei 추가
 // 지수표기 변경 소수점
 function exponentionToValue(value) {
-  let memberBalance = 0;
-  // 소수점인경우
-  if (Number(value.toFixed(18).slice(0, 1)) === 0) {
-    if (value.toFixed(18).replaceAll("0", "") === ".") {
-      memberBalance = "0";
-    } else {
-      memberBalance = value.toFixed(3);
-    }
-  } else {
-    // 정수인 경우
-    memberBalance = value.toFixed(18).split(".")[0];
-  }
+  memberBalance = utils.fromWei(utils.toBN(value), "ether");
   return memberBalance;
 }
 
@@ -636,7 +629,7 @@ function userBaseWalletInfo({ address, email, id, eth }) {
     console.log(balance);
     if (balance.trim() !== "") {
       document.getElementById("xruntoken").textContent =
-        exponentionToValue(Number(balance) / 100000000000000000) + " XRUN";
+        exponentionToValue(Number(balance)) + " XRUN";
     } else {
       document.getElementById("xruntoken").textContent = "0 XRUN";
     }
