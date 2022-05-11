@@ -4,7 +4,7 @@ const mainnetIP = "http://108.136.46.103:5006";
 
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
-const xrunContractAddress = "0x965e7662f2267348e30dD9B408AD4b469CFE1596";
+const xrunContractAddress = "0xb75c7D3119Af5eF187eFC3c7aea1540a589160f3";
 const minerAddresss = "0xbdc834d959b90e307A81782E7ca94F16b49C4E0B";
 const minerPassword = "TnkGg8j3SzkXSkD";
 const ERC20_abi = [
@@ -427,7 +427,7 @@ async function walletContractTokenTransfer({
     });
     await eth.personal.unlockAccount(fromAddress, pin);
     const response = await contract.methods
-      .transfer(toAddress, utils.toWei(value, "ether"))
+      .transfer(toAddress, utils.toWei(String(value)))
       .send({
         from: fromAddress,
       });

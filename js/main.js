@@ -397,6 +397,7 @@ function xm3010_inputAddress(eth) {
       const sendToAddress = document
         .getElementById("sendAddress")
         .value.toLowerCase();
+      console.log(mainnetAccount.length);
       if (mainnetAccount.includes(sendToAddress)) {
         chrome.storage.local.set({ xmTransferAddress: sendToAddress });
         location.href = "xm3030.html";
