@@ -302,8 +302,8 @@ function xm2210_signupFunction() {
         ]);
         if (data.code === 9102) {
           chrome.storage.local.set({ xm2210: data });
-          // location.href = "xm2220.html";
-          location.href = "xm1100.html";
+          location.href = "xm2230.html";
+          // location.href = "xm2230.html";
         }
       });
     }
