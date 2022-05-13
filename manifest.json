@@ -20,5 +20,5 @@
     "512": "images/icon-512.png"
   },
   "web_accessible_resources": [],
-  "permissions": ["tabs", "declarativeContent", "storage"]
+  "permissions": ["tabs", "storage"]
 }
