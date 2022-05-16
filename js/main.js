@@ -1,5 +1,36 @@
-const webSocket = new NetworkTryObj("108.136.46.103", "5001");
+const webSocket = new NetworkTryObj("108.136.46.103", "5002");
 let mainnetAccountList;
+const regionSelectData = [
+  {
+    region: "US",
+    code: 1,
+  },
+  {
+    region: "KR",
+    code: 82,
+  },
+  {
+    region: "ID",
+    code: 62,
+  },
+  {
+    region: "EU",
+    code: 32,
+  },
+  {
+    region: "GB",
+    code: 44,
+  },
+  {
+    region: "JP",
+    code: 81,
+  },
+  {
+    region: "SG",
+    code: 65,
+  },
+];
+
 // page Refresh
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
@@ -80,19 +111,19 @@ function xm1010_mainPopupSignin() {
     loadingAnimation();
     document.getElementById("xm1010alert").textContent = "";
     e.preventDefault();
-    const id = document.getElementById("id").value;
+    const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
-    if (id.trim() === "" || pin.trim() === "") {
+    if (email.trim() === "" || pin.trim() === "") {
       document.getElementById("xm1010alert").textContent =
         "아이디 비밀번호 입력 확인";
       return;
     } else {
       webSocket.webSocketInit(async socket => {
         const memberInfo = {};
-        memberInfo.id = id;
+        memberInfo.email = email;
         memberInfo.pin = pin;
         const response = await webSocket.sendMsgToSocket([
-          "xm2110",
+          "xm1010",
           JSON.stringify(memberInfo),
         ]);
         console.log(response);
@@ -104,7 +135,7 @@ function xm1010_mainPopupSignin() {
           loadingOutAnimation();
           document.getElementById("xm1010alert").textContent =
             "아이디 비밀번호 재입력";
-          document.getElementById("id").value = "";
+          document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
       });
@@ -120,7 +151,7 @@ function xm1030_mainPopup(eth) {
     });
     userBaseWalletInfo({
       address: localStorageData.xm1010.data.address,
-      id: localStorageData.xm1010.data.id,
+      // id: localStorageData.xm1010.data.id,
       email: localStorageData.xm1010.data.email,
       eth,
     });
@@ -221,16 +252,16 @@ function xm2110_signinFunction() {
     loadingAnimation();
     document.getElementById("xm2110alert").textContent = "";
     e.preventDefault();
-    const id = document.getElementById("id").value;
+    const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
-    if (id.trim() === "" || pin.trim() === "") {
+    if (email.trim() === "" || pin.trim() === "") {
       document.getElementById("xm2110alert").textContent =
-        "아이디 비밀번호 입력 확인";
+        "이메일 비밀번호 입력 확인";
       return;
     } else {
       webSocket.webSocketInit(async socket => {
         const memberInfo = {};
-        memberInfo.id = id;
+        memberInfo.email = email;
         memberInfo.pin = pin;
         const data = await webSocket.sendMsgToSocket([
           "xm2110",
@@ -244,7 +275,7 @@ function xm2110_signinFunction() {
           loadingOutAnimation();
           document.getElementById("xm2110alert").textContent =
             "아이디 비밀번호 재입력";
-          document.getElementById("id").value = "";
+          document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
       });
@@ -273,29 +304,43 @@ function xm2120_requestEmail() {
     });
   });
 }
+// id 삭제
 function xm2210_signupFunction() {
   document.getElementById("xm2210btn").addEventListener("click", function (e) {
     e.preventDefault();
-    const id = document.getElementById("id").value;
+    // const id = document.getElementById("id").value;
     const pin = document.getElementById("pin").value;
     const email = document.getElementById("email").value;
     const phonenumber = document.getElementById("phoneNumber").value;
+    const firstname = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
+    const region = document.getElementById("region").value;
     if (
-      id.trim() === "" ||
       pin.trim() === "" ||
       phonenumber.trim() === "" ||
-      email.trim() === ""
+      email.trim() === "" ||
+      firstname.trim() === "" ||
+      lastname.trim() === "" ||
+      region.trim() === ""
     ) {
-      alert("아이디 비밀번호 입력 필요");
+      alert("You need to enter information for membership");
       return;
     } else {
       webSocket.webSocketInit(async socket => {
         loadingAnimation();
         const memberInfo = {};
-        memberInfo.id = id;
+        regionSelectData.forEach(value => {
+          if (value.region === region) {
+            memberInfo.mobilecode = value.code;
+          }
+        });
         memberInfo.pin = pin;
         memberInfo.email = email;
         memberInfo.phonenumber = phonenumber;
+        memberInfo.firstname = firstname;
+        memberInfo.lastname = lastname;
+        memberInfo.region = region;
+
         const data = await webSocket.sendMsgToSocket([
           "xm2210",
           JSON.stringify(memberInfo),
@@ -303,7 +348,11 @@ function xm2210_signupFunction() {
         if (data.code === 9102) {
           chrome.storage.local.set({ xm2210: data });
           location.href = "xm2230.html";
-          // location.href = "xm2230.html";
+        } else if (data.code === 9101) {
+          alert(data.message);
+          loadingOutAnimation();
+          document.getElementById("pin").value = "";
+          document.getElementById("email").value = "";
         }
       });
     }
@@ -387,7 +436,7 @@ function xm3010_inputAddress(eth) {
   chrome.storage.local.get("xm1010", localStorageData => {
     userBaseWalletInfo({
       address: localStorageData.xm1010.data.address,
-      id: localStorageData.xm1010.data.id,
+      // id: localStorageData.xm1010.data.id,
       email: localStorageData.xm1010.data.email,
       eth,
     });
@@ -417,7 +466,7 @@ function xm3030_inputBalance(eth) {
   chrome.storage.local.get("xm1010", localStorageData => {
     userBaseWalletInfo({
       address: localStorageData.xm1010.data.address,
-      id: localStorageData.xm1010.data.id,
+      // id: localStorageData.xm1010.data.id,
       email: localStorageData.xm1010.data.email,
       eth,
     });
@@ -624,7 +673,7 @@ function exponentionToValue(value) {
 
 function userBaseWalletInfo({ address, email, id, eth }) {
   document.getElementById("address").textContent = address;
-  document.getElementById("id").textContent = id;
+  // document.getElementById("id").textContent = id;
   document.getElementById("email").textContent = email;
   getXRUNTokenBalanceOf({ address: address, eth }).then(balance => {
     console.log(balance);
