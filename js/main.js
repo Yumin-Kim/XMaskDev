@@ -149,6 +149,15 @@ function xm1030_mainPopup(eth) {
     chrome.storage.local.set({
       xmTransferValue: {},
     });
+    document.getElementById("address").addEventListener("click", () => {
+      var tempElem = document.createElement("textarea");
+      tempElem.value = localStorageData.xm1010.data.address;
+      document.body.appendChild(tempElem);
+      tempElem.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempElem);
+      alert(`Success copy address "${localStorageData.xm1010.data.address}"`);
+    });
     userBaseWalletInfo({
       address: localStorageData.xm1010.data.address,
       // id: localStorageData.xm1010.data.id,
