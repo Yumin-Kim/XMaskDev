@@ -309,12 +309,17 @@ function xm2210_signupFunction() {
   document.getElementById("xm2210btn").addEventListener("click", function (e) {
     e.preventDefault();
     // const id = document.getElementById("id").value;
+    let phonenumber = document.getElementById("phoneNumber").value;
     const pin = document.getElementById("pin").value;
     const email = document.getElementById("email").value;
-    const phonenumber = document.getElementById("phoneNumber").value;
     const firstname = document.getElementById("firstname").value;
     const lastname = document.getElementById("lastname").value;
     const region = document.getElementById("region").value;
+    if (phonenumber.length === 11) {
+      phonenumber = String(phonenumber)
+        .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+        .replace(/\-{1,2}$/g, "");
+    }
     if (
       pin.trim() === "" ||
       phonenumber.trim() === "" ||
@@ -340,7 +345,6 @@ function xm2210_signupFunction() {
         memberInfo.firstname = firstname;
         memberInfo.lastname = lastname;
         memberInfo.region = region;
-
         const data = await webSocket.sendMsgToSocket([
           "xm2210",
           JSON.stringify(memberInfo),
@@ -404,6 +408,7 @@ function xm2230_downloadKeyFile() {
   document.getElementById("xm2230btn").addEventListener("click", () => {
     loadingAnimation();
     chrome.storage.local.get("xm2210", cacheData => {
+      console.log("xm2210_get Chrome Store");
       console.log(cacheData.xm2210);
       webSocket.webSocketInit(async socket => {
         const respose = await webSocket.sendMsgToSocket([
@@ -413,17 +418,16 @@ function xm2230_downloadKeyFile() {
         console.log(respose);
         if (respose.code === 9102) {
           const { data } = respose;
-          saveToFile_Chrome(
-            data.filename
-              .split("/")
-              [data.filename.split("/").length - 1].substring(
-                0,
-                data.filename.length - 2
-              ),
-            data.filedata
-          );
+          // const filename = data.filename
+          //   .split("/")
+          //   [data.filename.split("/").length - 1].substring(
+          //     0,
+          //     data.filename.length - 2
+          //   )
+          const filename = `${cacheData.xm2210.data.email}_${cacheData.xm2210.data.address}.xrunkey`;
+          saveToFile_Chrome(filename, data.filedata);
           loadingOutAnimation();
-          location.href = "xm1100.html";
+          // location.href = "xm1100.html";
           // location.href = "xm1100.html";
         } else {
           document.getElementById("xm2110alert").textContent = "서버 오류";
@@ -615,9 +619,8 @@ function saveToFile_Chrome(fileName, content) {
   }
   window.__Xr_objURL_forCreatingFile__ = objURL;
   var a = document.createElement("a");
-  console.log(fileName);
-  console.log(objURL);
-  a.download = fileName.slice(0, fileName.length - 2);
+  // a.download = fileName.slice(0, fileName.length - 2);
+  a.download = fileName;
   a.href = objURL;
   a.click();
 }
