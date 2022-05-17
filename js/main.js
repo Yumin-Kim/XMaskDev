@@ -149,6 +149,7 @@ function xm1030_mainPopup(eth) {
     chrome.storage.local.set({
       xmTransferValue: {},
     });
+    // copy address
     document.getElementById("address").addEventListener("click", () => {
       var tempElem = document.createElement("textarea");
       tempElem.value = localStorageData.xm1010.data.address;
@@ -158,6 +159,27 @@ function xm1030_mainPopup(eth) {
       document.body.removeChild(tempElem);
       alert(`Success copy address "${localStorageData.xm1010.data.address}"`);
     });
+    // key file download
+    document.getElementById("fileDownaload").addEventListener("click", () => {
+      chrome.storage.local.get("xm2210", cacheData => {
+        webSocket.webSocketInit(async socket => {
+          const respose = await webSocket.sendMsgToSocket([
+            "xm2230",
+            JSON.stringify(localStorageData.xm1010.data),
+          ]);
+          if (respose.code === 9102) {
+            const { data } = respose;
+            const filename = `${localStorageData.xm1010.data.email}_${localStorageData.xm1010.data.address}.xrunkey`;
+            saveToFile_Chrome(filename, data.filedata);
+            // loadingOutAnimation();
+          } else {
+            alert(respose.message);
+            // document.getElementById("xm2110alert").textContent = "서버 오류";
+          }
+        });
+      });
+    });
+
     userBaseWalletInfo({
       address: localStorageData.xm1010.data.address,
       // id: localStorageData.xm1010.data.id,
