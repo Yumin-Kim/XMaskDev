@@ -52,7 +52,8 @@ createWeb3(mainnetIP)
         return;
       }
       case "xm2120": {
-        xm2120_requestEmail();
+        // xm2120_requestEmail();
+        xm2120_requestSMS();
       }
       case "xm2210": {
         xm2210_signupFunction(eth);
@@ -335,6 +336,28 @@ function xm2120_requestEmail() {
     });
   });
 }
+function xm2120_requestSMS() {
+  // chrome.storage.local.get("xm2110", ({ xm2110 }) => {
+  //   console.log(xm2110);
+  //   webSocket.webSocketInit(async socket => {
+  //     const memberInfo = {};
+  //     memberInfo.id = xm2110.id;
+  //     memberInfo.pin = xm2110.pin;
+  //     memberInfo.email = xm2110.email;
+  //     memberInfo.member = xm2110.member;
+  //     const data = await webSocket.sendMsgToSocket([
+  //       "xm2221_request",
+  //       JSON.stringify(memberInfo),
+  //     ]);
+  //     if (data.code === 9102) {
+  //       chrome.storage.local.set({ xm2210: data });
+  //       // 0412 verifiy email
+  //       // location.href = "xm2220.html";
+  //       location.href = "xm1100.html";
+  //     }
+  //   });
+  // });
+}
 // id 삭제
 function xm2210_signupFunction() {
   document.getElementById("xm2210btn").addEventListener("click", function (e) {
@@ -362,34 +385,34 @@ function xm2210_signupFunction() {
       alert("You need to enter information for membership");
       return;
     } else {
-      webSocket.webSocketInit(async socket => {
-        loadingAnimation();
-        const memberInfo = {};
-        regionSelectData.forEach(value => {
-          if (value.region === region) {
-            memberInfo.mobilecode = value.code;
-          }
-        });
-        memberInfo.pin = pin;
-        memberInfo.email = email;
-        memberInfo.phonenumber = phonenumber;
-        memberInfo.firstname = firstname;
-        memberInfo.lastname = lastname;
-        memberInfo.region = region;
-        const data = await webSocket.sendMsgToSocket([
-          "xm2210",
-          JSON.stringify(memberInfo),
-        ]);
-        if (data.code === 9102) {
-          chrome.storage.local.set({ xm2210: data });
-          location.href = "xm2230.html";
-        } else if (data.code === 9101) {
-          alert(data.message);
-          loadingOutAnimation();
-          document.getElementById("pin").value = "";
-          document.getElementById("email").value = "";
-        }
-      });
+      // webSocket.webSocketInit(async socket => {
+      //   loadingAnimation();
+      //   const memberInfo = {};
+      //   regionSelectData.forEach(value => {
+      //     if (value.region === region) {
+      //       memberInfo.mobilecode = value.code;
+      //     }
+      //   });
+      //   memberInfo.pin = pin;
+      //   memberInfo.email = email;
+      //   memberInfo.phonenumber = phonenumber;
+      //   memberInfo.firstname = firstname;
+      //   memberInfo.lastname = lastname;
+      //   memberInfo.region = region;
+      //   const data = await webSocket.sendMsgToSocket([
+      //     "xm2210",
+      //     JSON.stringify(memberInfo),
+      //   ]);
+      //   if (data.code === 9102) {
+      //     chrome.storage.local.set({ xm2210: data });
+      //     location.href = "xm2230.html";
+      //   } else if (data.code === 9101) {
+      //     alert(data.message);
+      //     loadingOutAnimation();
+      //     document.getElementById("pin").value = "";
+      //     document.getElementById("email").value = "";
+      //   }
+      // });
     }
   });
 }
