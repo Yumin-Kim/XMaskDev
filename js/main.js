@@ -31,6 +31,13 @@ const regionSelectData = [
   },
 ];
 
+const msg = {
+  xm2120: {
+    NotInputData: "Input information",
+    sendSMSData: "",
+  },
+};
+
 // page Refresh
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
@@ -337,6 +344,42 @@ function xm2120_requestEmail() {
   });
 }
 function xm2120_requestSMS() {
+  displayTag(document.getElementsByClassName("xm2120ReSendbtn"), "none");
+  displayTag(document.getElementsByClassName("inputMobileCodeClass"), "none");
+  document
+    .getElementsByClassName("xm2120sendbtn")
+    .item(0)
+    .addEventListener("click", e => {
+      e.preventDefault();
+      let mobileCode;
+      const country = document.getElementById("region").value;
+      const mobile = document.getElementById("mobile").value;
+      if (country.trim() === "" || mobile.trim() === "") {
+        alert("Input Information");
+      } else {
+        displayTag(document.getElementsByClassName("xm2120ReSendbtn"), "block");
+        displayTag(document.getElementsByClassName("xm2120sendbtn"), "none");
+        regionSelectData.forEach(value => {
+          if (value.region === country) {
+            mobileCode = value.code;
+          }
+        });
+        AJAXRequestMethod({
+          method: "POST",
+          requestURL: `http://108.137.44.65/gateway.php?act=login-02&mobile=${mobile}&country=${mobileCode}`,
+        }).then(data => {
+          console.log(data);
+        });
+      }
+    });
+  document.getElementById("xm2120Verify").addEventListener("click", e => {
+    e.preventDefault();
+  });
+  document.getElementById("xm2120ReSend").addEventListener("click", e => {
+    e.preventDefault();
+  });
+
+  // document.getElementsByClassName("xm2120ReSendbtn").item();
   // chrome.storage.local.get("xm2110", ({ xm2110 }) => {
   //   console.log(xm2110);
   //   webSocket.webSocketInit(async socket => {
@@ -740,5 +783,26 @@ function userBaseWalletInfo({ address, email, id, eth }) {
     } else {
       document.getElementById("xruntoken").textContent = "0 XRUN";
     }
+  });
+}
+
+function displayTag(tag, show) {
+  Array(tag.length)
+    .fill()
+    .forEach((value, index) => {
+      tag.item(index).style.display = show;
+    });
+}
+
+function AJAXRequestMethod({ method, requestURL }) {
+  return new Promise((res, rej) => {
+    const XHR = new XMLHttpRequest();
+    XHR.open(method, requestURL);
+    XHR.send();
+    XHR.onreadystatechange = target => {
+      if (XHR.status === 200 && XHR.response.trim() !== "") {
+        res(JSON.parse(XHR.response));
+      }
+    };
   });
 }
