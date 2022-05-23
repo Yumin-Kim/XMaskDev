@@ -4,7 +4,7 @@ const mainnetIP = "http://108.136.46.103:5006";
 
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
-const xrunContractAddress = "0xb75c7D3119Af5eF187eFC3c7aea1540a589160f3";
+const xrunContractAddress = "0x9DC979a77BFddbE24b3E934ed6597C5c91F3f5D3";
 const minerAddresss = "0xbdc834d959b90e307A81782E7ca94F16b49C4E0B";
 const minerPassword = "TnkGg8j3SzkXSkD";
 const ERC20_abi = [
@@ -110,18 +110,383 @@ const ERC20_abi = [
         name: "_spender",
         type: "address",
       },
-      { internalType: "uint256", name: "_value", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
     ],
     name: "ApproveByNFT",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "_to", type: "address" }],
+    inputs: [
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+    ],
     name: "BalanceOfERC20Token",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TimeNow",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_creatorAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_customerAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "TransferByNFT",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_sender",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "TransferFromByNFT",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "administrators",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "allowance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "approve",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "burn",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_from",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "burnFrom",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "decimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "frozen",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "limitUntil",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "limitation",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "target",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "limitBalance",
+        type: "uint256[]",
+      },
+      {
+        internalType: "bool",
+        name: "freeze",
+        type: "bool",
+      },
+    ],
+    name: "multiLimit",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "set",
+        type: "bool",
+      },
+    ],
+    name: "setAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "setTimeNow",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -141,188 +506,13 @@ const ERC20_abi = [
         name: "_value",
         type: "uint256",
       },
-      { internalType: "bool", name: "_frozen", type: "bool" },
-    ],
-    name: "TESTsetlimit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
-        internalType: "address",
-        name: "_creatorAddress",
-        type: "address",
+        internalType: "bool",
+        name: "_frozen",
+        type: "bool",
       },
-      {
-        internalType: "address",
-        name: "_customerAddress",
-        type: "address",
-      },
-      { internalType: "uint256", name: "value", type: "uint256" },
     ],
-    name: "TransferByNFT",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_sender",
-        type: "address",
-      },
-      { internalType: "address", name: "_from", type: "address" },
-      { internalType: "address", name: "_to", type: "address" },
-      { internalType: "uint256", name: "_value", type: "uint256" },
-    ],
-    name: "TransferFromByNFT",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "administrators",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "", type: "address" },
-      { internalType: "address", name: "", type: "address" },
-    ],
-    name: "allowance",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_spender",
-        type: "address",
-      },
-      { internalType: "uint256", name: "_value", type: "uint256" },
-    ],
-    name: "approve",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_spender",
-        type: "address",
-      },
-      { internalType: "uint256", name: "_value", type: "uint256" },
-    ],
-    name: "approveAndCall",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "balanceOf",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "_value", type: "uint256" }],
-    name: "burn",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_from", type: "address" },
-      { internalType: "uint256", name: "_value", type: "uint256" },
-    ],
-    name: "burnFrom",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "decimals",
-    outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "frozen",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "limitUntil",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "limitation",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "target",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "limitBalance",
-        type: "uint256[]",
-      },
-      { internalType: "bool", name: "freeze", type: "bool" },
-    ],
-    name: "multiLimit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      { internalType: "bool", name: "set", type: "bool" },
-    ],
-    name: "setAdmin",
+    name: "setlimitUntil",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -330,42 +520,79 @@ const ERC20_abi = [
   {
     inputs: [],
     name: "symbol",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "testTimeNow",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalSupply",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "_to", type: "address" },
-      { internalType: "uint256", name: "_value", type: "uint256" },
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
     ],
     name: "transfer",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "_from", type: "address" },
-      { internalType: "address", name: "_to", type: "address" },
-      { internalType: "uint256", name: "_value", type: "uint256" },
+      {
+        internalType: "address",
+        name: "_from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
     ],
     name: "transferFrom",
-    outputs: [{ internalType: "bool", name: "success", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
