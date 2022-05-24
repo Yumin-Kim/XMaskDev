@@ -32,9 +32,28 @@ const regionSelectData = [
 ];
 
 const msg = {
+  xm1010: {
+    inputBox:
+      "Please input your XRUN AR Appliaction email , password information",
+  },
+  xm2110: {
+    inputBox:
+      "Please input your XRUN AR Appliaction email , password information",
+  },
   xm2120: {
     NotInputData: "Input information",
     sendSMSData: "",
+  },
+  xm3010: {
+    validAddress: "Invalid Address",
+  },
+  xm3030: {
+    balanceInputBox: "Please only number",
+    balanceInputBoxError: "A shortage of balance",
+  },
+  xm3050: {
+    pinErorr: "Not Match Your input Password",
+    pinEmpty: "Please your password",
   },
 };
 
@@ -122,8 +141,7 @@ function xm1010_mainPopupSignin() {
     const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
     if (email.trim() === "" || pin.trim() === "") {
-      document.getElementById("xm1010alert").textContent =
-        "아이디 비밀번호 입력 확인";
+      document.getElementById("xm1010alert").textContent = msg.xm1010.inputBox;
       return;
     } else {
       webSocket.webSocketInit(async socket => {
@@ -142,7 +160,7 @@ function xm1010_mainPopupSignin() {
         } else {
           loadingOutAnimation();
           document.getElementById("xm1010alert").textContent =
-            "아이디 비밀번호 재입력";
+            msg.xm1010.inputBox;
           document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
@@ -294,8 +312,7 @@ function xm2110_signinFunction() {
     const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
     if (email.trim() === "" || pin.trim() === "") {
-      document.getElementById("xm2110alert").textContent =
-        "이메일 비밀번호 입력 확인";
+      document.getElementById("xm2110alert").textContent = msg.xm2110.inputBox;
       return;
     } else {
       webSocket.webSocketInit(async socket => {
@@ -313,7 +330,7 @@ function xm2110_signinFunction() {
         } else {
           loadingOutAnimation();
           document.getElementById("xm2110alert").textContent =
-            "아이디 비밀번호 재입력";
+            msg.xm2110.inputBox;
           document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
@@ -547,13 +564,13 @@ function xm3010_inputAddress(eth) {
       const sendToAddress = document
         .getElementById("sendAddress")
         .value.toLowerCase();
-      console.log(mainnetAccount.length);
-      if (mainnetAccount.includes(sendToAddress)) {
+      console.log(sendToAddress.length);
+      if (sendToAddress.length >= 42) {
         chrome.storage.local.set({ xmTransferAddress: sendToAddress });
         location.href = "xm3030.html";
       } else {
         document.getElementById("xm3010alert").textContent =
-          "Not found to address in XRUN Mainnet ";
+          msg.xm3010.validAddress;
       }
     });
   });
@@ -578,7 +595,7 @@ function xm3030_inputBalance(eth) {
     document.getElementById("xm3030alert").textContent = "";
     if (isNaN(Number(value))) {
       document.getElementById("xm3030alert").textContent =
-        "숫자를 입력해주세요";
+        msg.xm3030.balanceInputBox;
       document.getElementById("sendBalance").value = "";
     } else {
       if (Number(memberBalanceOf.replace(" XRUN", "")) - Number(value) >= 0) {
@@ -595,7 +612,8 @@ function xm3030_inputBalance(eth) {
         location.href = "xm3050.html";
       } else {
         document.getElementById("sendBalance").value = "";
-        document.getElementById("xm3030alert").textContent = "잔액 부족";
+        document.getElementById("xm3030alert").textContent =
+          msg.xm3030.balanceInputBoxError;
       }
     }
   });
@@ -633,37 +651,29 @@ function xm3050_inputpassword(eth, utils) {
                 "xm3050",
                 JSON.stringify(memberInfo),
               ]);
-              console.log(response);
               if (response.code === 9102) {
-                walletContractTokenTransfer({
-                  utils,
-                  eth,
-                  toAddress: xmTransferAddress,
-                  pin,
-                  fromAddress: xm1010.data.address,
-                  value: xmTransferValue.value,
+                AJAXRequestMethod({
+                  method: "GET",
+                  requestURL: `https://app.xrun.run/gateway.php?act=app4300-02-rev&member=${xm1010.data.member}&currency=11&amount=${xmTransferValue.value}&addrto=${xmTransferAddress}&memo=7603&pin=${pin}`,
                 })
-                  .then(response => {
-                    console.log(response);
+                  .then(data => {
+                    console.log(data);
                     loadingOutAnimation();
-                    chrome.storage.local.set({ receipt: response });
-                    location.href = "xm3060.html";
+                    location.href = "xm1030.html";
                   })
                   .catch(error => {
-                    location.href = "xm3070.html";
-                    chrome.storage.local.set({ receiptError: error });
                     console.log(error);
                   });
               } else {
                 loadingOutAnimation();
                 document.getElementById("xm3050alert").textContent =
-                  "비밀번호 불일치";
+                  msg.xm3050.pinErorr;
                 document.getElementById("pin").value = "";
               }
             });
           } else {
             document.getElementById("xm3050alert").textContent =
-              "비밀번호 입력";
+              msg.xm3050.pinEmpty;
             document.getElementById("pin").value = "";
           }
         });
