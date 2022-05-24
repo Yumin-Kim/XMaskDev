@@ -5,8 +5,6 @@ const mainnetIP = "http://108.136.46.103:5006";
 const testnetIP = "http://54.169.135.228:5006";
 const localIP = "http://127.0.0.1:5006";
 const xrunContractAddress = "0x9DC979a77BFddbE24b3E934ed6597C5c91F3f5D3";
-const minerAddresss = "0xbdc834d959b90e307A81782E7ca94F16b49C4E0B";
-const minerPassword = "TnkGg8j3SzkXSkD";
 const ERC20_abi = [
   {
     inputs: [
@@ -633,41 +631,6 @@ async function getXRUNTokenBalanceOf({ address, eth }) {
 
 async function getMainnetAccountList({ eth }) {
   return await eth.getAccounts();
-}
-
-async function walletContractTokenTransfer({
-  utils,
-  eth,
-  toAddress,
-  fromAddress,
-  value,
-  pin,
-}) {
-  const contract = await new eth.Contract(ERC20_abi, xrunContractAddress);
-  let responseWeb3 = {};
-  try {
-    await eth.personal.unlockAccount(minerAddresss, minerPassword);
-    await eth.sendTransaction({
-      from: minerAddresss,
-      to: fromAddress,
-      value: utils.toWei(String(0.01), `ether`),
-    });
-    await eth.personal.unlockAccount(fromAddress, pin);
-    const response = await contract.methods
-      .transfer(toAddress, utils.toWei(String(value)))
-      .send({
-        from: fromAddress,
-      });
-    responseWeb3.response = response;
-    responseWeb3.message = "success";
-    responseWeb3.code = 9102;
-    return responseWeb3;
-  } catch (error) {
-    responseWeb3.message = "failure";
-    responseWeb3.log = error;
-    responseWeb3.code = 9101;
-    return responseWeb3;
-  }
 }
 
 function unixToDate(date) {
