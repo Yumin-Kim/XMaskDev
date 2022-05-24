@@ -122,6 +122,10 @@ createWeb3(mainnetIP)
         xm3070_failureReceipt();
         return;
       }
+      case "xm5101": {
+        xm5101_detailERC20TransacitonRecipt(eth);
+        return;
+      }
       default:
         return;
     }
@@ -187,7 +191,7 @@ function xm1000_mainPopup(eth) {
       alert(`Success copy address "${localStorageData.xm1100.data.address}"`);
     });
     // key file download
-    document.getElementById("fileDownaload").addEventListener("click", () => {
+    document.getElementById("xm4200").addEventListener("click", () => {
       chrome.storage.local.get("xm2220", cacheData => {
         webSocket.webSocketInit(async socket => {
           const respose = await webSocket.sendMsgToSocket([
@@ -219,6 +223,7 @@ function xm1000_mainPopup(eth) {
         2
       )}`,
     ];
+    let validTransferReceipt = false;
     getContractPastEvents({ topics, eth })
       .then(fromGetPastEventResult => {
         const topics = [
@@ -252,12 +257,13 @@ function xm1000_mainPopup(eth) {
               const contractList = memberPastEventResultArray.reverse();
               const historyArray = await contractList.reduce(
                 async (prev, cur, index) => {
-                  const { returnValues, event } = cur;
+                  const { returnValues, event, transactionHash } = cur;
                   const prevData = await prev.then();
                   const { timestamp } = await eth.getBlock(cur.blockNumber);
                   return Promise.resolve([
                     ...prevData,
                     historyBlock({
+                      txHash: transactionHash,
                       value: exponentionToValue(returnValues[2]),
                       from: returnValues[0],
                       to: returnValues[1],
@@ -279,6 +285,7 @@ function xm1000_mainPopup(eth) {
                 Promise.resolve([])
               );
               historyInnerHTML = historyArray.join(",").replaceAll(",", "");
+              validTransferReceipt = true;
             } else {
               historyInnerHTML = `<li class="historyliTag">
                         <div class="row">
@@ -294,6 +301,24 @@ function xm1000_mainPopup(eth) {
                       </li>`;
             }
             document.getElementById("historyList").innerHTML = historyInnerHTML;
+            if (validTransferReceipt) {
+              const historyLiTags =
+                document.getElementsByClassName("historyliTag");
+              Array(document.getElementsByClassName("historyliTag").length)
+                .fill()
+                .forEach((v, i) => {
+                  const historyLiTag = historyLiTags.item(i);
+                  historyLiTag.addEventListener("click", () => {
+                    const txhash = historyLiTag
+                      .getElementsByTagName("input")
+                      .item(0).value;
+                    const value = historyLiTag
+                      .getElementsByTagName("input")
+                      .item(1).value;
+                    location.href = `xm5101.html?txHash=${txhash}&value=${value}`;
+                  });
+                });
+            }
           }
         );
       })
@@ -716,6 +741,31 @@ function xm3070_failureReceipt() {
     location.href = "xm1000.html";
   });
 }
+
+function xm5101_detailERC20TransacitonRecipt(eth) {
+  const { search } = location;
+  const [txHashList, valueList] = search.split("&");
+  const [, txHash] = txHashList.split("=");
+  const [, value] = valueList.split("=");
+  getTransactionReceipt({ eth, txHash })
+    .then(data => {
+      document.getElementById("value").innerHTML = value;
+      document.getElementById("fromAddress").innerHTML =
+        "0x" + data.logs[0].topics[1].slice(26);
+      document.getElementById("toAddress").innerHTML =
+        "0x" + data.logs[0].topics[2].slice(26);
+      document.getElementById("timestamp").innerHTML = unixToDate(
+        data.timestamp
+      );
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  document.getElementById("home").addEventListener("click", () => {
+    location.href = "xm1000.html";
+  });
+}
+
 function saveToFile_Chrome(fileName, content) {
   console.log(fileName);
   var blob = new Blob([content], { type: "text/plain" });
@@ -741,6 +791,7 @@ function loadingOutAnimation() {
 }
 
 const historyBlock = ({
+  txHash,
   value,
   to,
   from,
@@ -754,6 +805,8 @@ const historyBlock = ({
   <div class="col-9">
     <div class="d-flex">
       <div class="flex-grow-1">
+        <input id="txHash"  hidden value="${txHash}"/>
+        <input id="txHashValue"  hidden value="${value}"/>
         <h3 class="mt-0 mb-1">${value} XRUN</h3>
         <h5 class="mt-0 eventHTag">${event}</h5>
         <p class="historyEle ${fromMember ? "bold" : null}">from :${from}</p>

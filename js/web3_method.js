@@ -629,6 +629,13 @@ async function getXRUNTokenBalanceOf({ address, eth }) {
   return await contract.methods.balanceOf(address).call();
 }
 
+async function getTransactionReceipt({ eth, txHash }) {
+  const data = await eth.getTransactionReceipt(txHash);
+  const { timestamp } = await eth.getBlock(data.blockNumber);
+  data.timestamp = timestamp;
+  return data;
+}
+
 async function getMainnetAccountList({ eth }) {
   return await eth.getAccounts();
 }
