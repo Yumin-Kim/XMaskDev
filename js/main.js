@@ -30,17 +30,16 @@ const regionSelectData = [
     code: 65,
   },
 ];
-
 const msg = {
-  xm1010: {
-    inputBox:
-      "Please input your XRUN AR Appliaction email , password information",
-  },
-  xm2110: {
+  xm1100: {
     inputBox:
       "Please input your XRUN AR Appliaction email , password information",
   },
   xm2120: {
+    inputBox:
+      "Please input your XRUN AR Appliaction email , password information",
+  },
+  xm2110: {
     NotInputData: "Input information",
     sendSMSData: "",
   },
@@ -56,6 +55,8 @@ const msg = {
     pinEmpty: "Please your password",
   },
 };
+
+const gatewayRemoteAddresss = "https://app.xrun.run/gateway.php";
 
 // page Refresh
 // $("#preloader").css("opacity", 0.6);
@@ -73,32 +74,32 @@ createWeb3(mainnetIP)
     console.log(pathname);
     [pathname] = pathname.slice(1).split(".");
     switch (pathname) {
-      case "xm2110": {
-        xm2110_signinFunction();
-        return;
-      }
       case "xm2120": {
-        // xm2120_requestEmail();
-        xm2120_requestSMS();
-      }
-      case "xm2210": {
-        xm2210_signupFunction(eth);
+        xm2120_signinFunction();
         return;
+      }
+      case "xm2110": {
+        // xm2110_requestEmail();
+        xm2110_requestSMS();
       }
       case "xm2220": {
-        xm2220_AuthEmailFunction();
+        xm2220_signupFunction(eth);
+        return;
+      }
+      case "xm2210": {
+        xm2210_AuthEmailFunction();
         return;
       }
       case "xm2230": {
         xm2230_downloadKeyFile();
         return;
       }
-      case "xm1010": {
-        xm1010_mainPopupSignin();
+      case "xm1100": {
+        xm1100_mainPopupSignin();
         return;
       }
-      case "xm1030": {
-        xm1030_mainPopup(eth);
+      case "xm1000": {
+        xm1000_mainPopup(eth);
         return;
       }
       case "xm3010": {
@@ -126,22 +127,22 @@ createWeb3(mainnetIP)
     }
   })
   .catch(() => {});
-function xm1010_mainPopupSignin() {
-  chrome.storage.local.get("xm1010", result => {
-    if (result.xm1010 !== undefined) {
-      if (Object.entries(result.xm1010.data).length !== 0) {
-        location.href = "xm1030.html";
+function xm1100_mainPopupSignin() {
+  chrome.storage.local.get("xm1100", result => {
+    if (result.xm1100 !== undefined) {
+      if (Object.entries(result.xm1100.data).length !== 0) {
+        location.href = "xm1000.html";
       }
     }
   });
-  document.getElementById("xm1010btn").addEventListener("click", function (e) {
+  document.getElementById("xm1100btn").addEventListener("click", function (e) {
     loadingAnimation();
-    document.getElementById("xm1010alert").textContent = "";
+    document.getElementById("xm1100alert").textContent = "";
     e.preventDefault();
     const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
     if (email.trim() === "" || pin.trim() === "") {
-      document.getElementById("xm1010alert").textContent = msg.xm1010.inputBox;
+      document.getElementById("xm1100alert").textContent = msg.xm1100.inputBox;
       return;
     } else {
       webSocket.webSocketInit(async socket => {
@@ -149,18 +150,18 @@ function xm1010_mainPopupSignin() {
         memberInfo.email = email;
         memberInfo.pin = pin;
         const response = await webSocket.sendMsgToSocket([
-          "xm1010",
+          "xm1100",
           JSON.stringify(memberInfo),
         ]);
         console.log(response);
         if (response.code === 9102) {
-          chrome.storage.local.set({ xm1010: response });
-          // location.href = "xm1020.html";
-          location.href = "xm1030.html";
+          chrome.storage.local.set({ xm1100: response });
+          // location.href = "xm1110.html";
+          location.href = "xm1000.html";
         } else {
           loadingOutAnimation();
-          document.getElementById("xm1010alert").textContent =
-            msg.xm1010.inputBox;
+          document.getElementById("xm1100alert").textContent =
+            msg.xm1100.inputBox;
           document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
@@ -169,8 +170,8 @@ function xm1010_mainPopupSignin() {
   });
 }
 
-function xm1030_mainPopup(eth) {
-  chrome.storage.local.get("xm1010", localStorageData => {
+function xm1000_mainPopup(eth) {
+  chrome.storage.local.get("xm1100", localStorageData => {
     chrome.storage.local.set({ xmTransferAddress: "" });
     chrome.storage.local.set({
       xmTransferValue: {},
@@ -178,43 +179,43 @@ function xm1030_mainPopup(eth) {
     // copy address
     document.getElementById("address").addEventListener("click", () => {
       var tempElem = document.createElement("textarea");
-      tempElem.value = localStorageData.xm1010.data.address;
+      tempElem.value = localStorageData.xm1100.data.address;
       document.body.appendChild(tempElem);
       tempElem.select();
       document.execCommand("copy");
       document.body.removeChild(tempElem);
-      alert(`Success copy address "${localStorageData.xm1010.data.address}"`);
+      alert(`Success copy address "${localStorageData.xm1100.data.address}"`);
     });
     // key file download
     document.getElementById("fileDownaload").addEventListener("click", () => {
-      chrome.storage.local.get("xm2210", cacheData => {
+      chrome.storage.local.get("xm2220", cacheData => {
         webSocket.webSocketInit(async socket => {
           const respose = await webSocket.sendMsgToSocket([
             "xm2230",
-            JSON.stringify(localStorageData.xm1010.data),
+            JSON.stringify(localStorageData.xm1100.data),
           ]);
           if (respose.code === 9102) {
             const { data } = respose;
-            const filename = `${localStorageData.xm1010.data.email}_${localStorageData.xm1010.data.address}.xrunkey`;
+            const filename = `${localStorageData.xm1100.data.email}_${localStorageData.xm1100.data.address}.xrunkey`;
             saveToFile_Chrome(filename, data.filedata);
             // loadingOutAnimation();
           } else {
             alert(respose.message);
-            // document.getElementById("xm2110alert").textContent = "서버 오류";
+            // document.getElementById("xm2120alert").textContent = "서버 오류";
           }
         });
       });
     });
 
     userBaseWalletInfo({
-      address: localStorageData.xm1010.data.address,
-      // id: localStorageData.xm1010.data.id,
-      email: localStorageData.xm1010.data.email,
+      address: localStorageData.xm1100.data.address,
+      // id: localStorageData.xm1100.data.id,
+      email: localStorageData.xm1100.data.email,
       eth,
     });
     let topics = [
       null,
-      `0x000000000000000000000000${localStorageData.xm1010.data.address.slice(
+      `0x000000000000000000000000${localStorageData.xm1100.data.address.slice(
         2
       )}`,
     ];
@@ -223,7 +224,7 @@ function xm1030_mainPopup(eth) {
         const topics = [
           null,
           null,
-          `0x000000000000000000000000${localStorageData.xm1010.data.address.slice(
+          `0x000000000000000000000000${localStorageData.xm1100.data.address.slice(
             2
           )}`,
         ];
@@ -263,12 +264,12 @@ function xm1030_mainPopup(eth) {
                       timestamp: unixToDate(timestamp),
                       event,
                       fromMember:
-                        localStorageData.xm1010.data.address.toLocaleLowerCase() ===
+                        localStorageData.xm1100.data.address.toLocaleLowerCase() ===
                         returnValues[0].toLocaleLowerCase()
                           ? true
                           : false,
                       toMember:
-                        localStorageData.xm1010.data.address.toLocaleLowerCase() ===
+                        localStorageData.xm1100.data.address.toLocaleLowerCase() ===
                         returnValues[1].toLocaleLowerCase()
                           ? true
                           : false,
@@ -298,21 +299,21 @@ function xm1030_mainPopup(eth) {
       })
       .finally(() => {});
   });
-  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+  document.getElementById("xm1000flushCache").addEventListener("click", e => {
     chrome.storage.local.clear(() => {
-      location.href = "xm1010.html";
+      location.href = "xm1100.html";
     });
   });
 }
-function xm2110_signinFunction() {
-  document.getElementById("xm2110btn").addEventListener("click", e => {
+function xm2120_signinFunction() {
+  document.getElementById("xm2120btn").addEventListener("click", e => {
     loadingAnimation();
-    document.getElementById("xm2110alert").textContent = "";
+    document.getElementById("xm2120alert").textContent = "";
     e.preventDefault();
     const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
     if (email.trim() === "" || pin.trim() === "") {
-      document.getElementById("xm2110alert").textContent = msg.xm2110.inputBox;
+      document.getElementById("xm2120alert").textContent = msg.xm2120.inputBox;
       return;
     } else {
       webSocket.webSocketInit(async socket => {
@@ -320,17 +321,17 @@ function xm2110_signinFunction() {
         memberInfo.email = email;
         memberInfo.pin = pin;
         const data = await webSocket.sendMsgToSocket([
-          "xm2110",
+          "xm2120",
           JSON.stringify(memberInfo),
         ]);
         if (data.code === 9102) {
-          chrome.storage.local.set({ xm2110: data });
-          // location.href = "xm2120.html";
-          location.href = "xm1100.html";
+          chrome.storage.local.set({ xm2120: data });
+          // location.href = "xm2110.html";
+          location.href = "xm2130.html";
         } else {
           loadingOutAnimation();
-          document.getElementById("xm2110alert").textContent =
-            msg.xm2110.inputBox;
+          document.getElementById("xm2120alert").textContent =
+            msg.xm2120.inputBox;
           document.getElementById("email").value = "";
           document.getElementById("pin").value = "";
         }
@@ -338,33 +339,33 @@ function xm2110_signinFunction() {
     }
   });
 }
-function xm2120_requestEmail() {
-  chrome.storage.local.get("xm2110", ({ xm2110 }) => {
-    console.log(xm2110);
+function xm2110_requestEmail() {
+  chrome.storage.local.get("xm2120", ({ xm2120 }) => {
+    console.log(xm2120);
     webSocket.webSocketInit(async socket => {
       const memberInfo = {};
-      memberInfo.id = xm2110.id;
-      memberInfo.pin = xm2110.pin;
-      memberInfo.email = xm2110.email;
-      memberInfo.member = xm2110.member;
+      memberInfo.id = xm2120.id;
+      memberInfo.pin = xm2120.pin;
+      memberInfo.email = xm2120.email;
+      memberInfo.member = xm2120.member;
       const data = await webSocket.sendMsgToSocket([
         "xm2221_request",
         JSON.stringify(memberInfo),
       ]);
       if (data.code === 9102) {
-        chrome.storage.local.set({ xm2210: data });
+        chrome.storage.local.set({ xm2220: data });
         // 0412 verifiy email
-        // location.href = "xm2220.html";
-        location.href = "xm1100.html";
+        // location.href = "xm2210.html";
+        location.href = "xm2130.html";
       }
     });
   });
 }
-function xm2120_requestSMS() {
-  displayTag(document.getElementsByClassName("xm2120ReSendbtn"), "none");
+function xm2110_requestSMS() {
+  displayTag(document.getElementsByClassName("xm2110ReSendbtn"), "none");
   displayTag(document.getElementsByClassName("inputMobileCodeClass"), "none");
   document
-    .getElementsByClassName("xm2120sendbtn")
+    .getElementsByClassName("xm2110sendbtn")
     .item(0)
     .addEventListener("click", e => {
       e.preventDefault();
@@ -374,8 +375,8 @@ function xm2120_requestSMS() {
       if (country.trim() === "" || mobile.trim() === "") {
         alert("Input Information");
       } else {
-        displayTag(document.getElementsByClassName("xm2120ReSendbtn"), "block");
-        displayTag(document.getElementsByClassName("xm2120sendbtn"), "none");
+        displayTag(document.getElementsByClassName("xm2110ReSendbtn"), "block");
+        displayTag(document.getElementsByClassName("xm2110sendbtn"), "none");
         regionSelectData.forEach(value => {
           if (value.region === country) {
             mobileCode = value.code;
@@ -383,44 +384,44 @@ function xm2120_requestSMS() {
         });
         AJAXRequestMethod({
           method: "POST",
-          requestURL: `http://108.137.44.65/gateway.php?act=login-02&mobile=${mobile}&country=${mobileCode}`,
+          requestURL: `${gatewayRemoteAddresss}?act=login-02&mobile=${mobile}&country=${mobileCode}`,
         }).then(data => {
           console.log(data);
         });
       }
     });
-  document.getElementById("xm2120Verify").addEventListener("click", e => {
+  document.getElementById("xm2110Verify").addEventListener("click", e => {
     e.preventDefault();
   });
-  document.getElementById("xm2120ReSend").addEventListener("click", e => {
+  document.getElementById("xm2110ReSend").addEventListener("click", e => {
     e.preventDefault();
   });
 
-  // document.getElementsByClassName("xm2120ReSendbtn").item();
-  // chrome.storage.local.get("xm2110", ({ xm2110 }) => {
-  //   console.log(xm2110);
+  // document.getElementsByClassName("xm2110ReSendbtn").item();
+  // chrome.storage.local.get("xm2120", ({ xm2120 }) => {
+  //   console.log(xm2120);
   //   webSocket.webSocketInit(async socket => {
   //     const memberInfo = {};
-  //     memberInfo.id = xm2110.id;
-  //     memberInfo.pin = xm2110.pin;
-  //     memberInfo.email = xm2110.email;
-  //     memberInfo.member = xm2110.member;
+  //     memberInfo.id = xm2120.id;
+  //     memberInfo.pin = xm2120.pin;
+  //     memberInfo.email = xm2120.email;
+  //     memberInfo.member = xm2120.member;
   //     const data = await webSocket.sendMsgToSocket([
   //       "xm2221_request",
   //       JSON.stringify(memberInfo),
   //     ]);
   //     if (data.code === 9102) {
-  //       chrome.storage.local.set({ xm2210: data });
+  //       chrome.storage.local.set({ xm2220: data });
   //       // 0412 verifiy email
-  //       // location.href = "xm2220.html";
-  //       location.href = "xm1100.html";
+  //       // location.href = "xm2210.html";
+  //       location.href = "xm2130.html";
   //     }
   //   });
   // });
 }
 // id 삭제
-function xm2210_signupFunction() {
-  document.getElementById("xm2210btn").addEventListener("click", function (e) {
+function xm2220_signupFunction() {
+  document.getElementById("xm2220btn").addEventListener("click", function (e) {
     e.preventDefault();
     // const id = document.getElementById("id").value;
     let phonenumber = document.getElementById("phoneNumber").value;
@@ -460,11 +461,11 @@ function xm2210_signupFunction() {
       //   memberInfo.lastname = lastname;
       //   memberInfo.region = region;
       //   const data = await webSocket.sendMsgToSocket([
-      //     "xm2210",
+      //     "xm2220",
       //     JSON.stringify(memberInfo),
       //   ]);
       //   if (data.code === 9102) {
-      //     chrome.storage.local.set({ xm2210: data });
+      //     chrome.storage.local.set({ xm2220: data });
       //     location.href = "xm2230.html";
       //   } else if (data.code === 9101) {
       //     alert(data.message);
@@ -476,11 +477,11 @@ function xm2210_signupFunction() {
     }
   });
 }
-function xm2220_AuthEmailFunction() {
+function xm2210_AuthEmailFunction() {
   let count = 0;
-  chrome.storage.local.get("xm2210", result => {
+  chrome.storage.local.get("xm2220", result => {
     if (Object.entries(result).length !== 0) {
-      const { data } = result.xm2210;
+      const { data } = result.xm2220;
       document.getElementById("memberemail").textContent = data.email;
       // document.getElementById("auth").
 
@@ -521,13 +522,13 @@ function xm2220_AuthEmailFunction() {
 function xm2230_downloadKeyFile() {
   document.getElementById("xm2230btn").addEventListener("click", () => {
     loadingAnimation();
-    chrome.storage.local.get("xm2210", cacheData => {
-      console.log("xm2210_get Chrome Store");
-      console.log(cacheData.xm2210);
+    chrome.storage.local.get("xm2220", cacheData => {
+      console.log("xm2220_get Chrome Store");
+      console.log(cacheData.xm2220);
       webSocket.webSocketInit(async socket => {
         const respose = await webSocket.sendMsgToSocket([
           "xm2230",
-          JSON.stringify(cacheData.xm2210.data),
+          JSON.stringify(cacheData.xm2220.data),
         ]);
         console.log(respose);
         if (respose.code === 9102) {
@@ -538,24 +539,24 @@ function xm2230_downloadKeyFile() {
           //     0,
           //     data.filename.length - 2
           //   )
-          const filename = `${cacheData.xm2210.data.email}_${cacheData.xm2210.data.address}.xrunkey`;
+          const filename = `${cacheData.xm2220.data.email}_${cacheData.xm2220.data.address}.xrunkey`;
           saveToFile_Chrome(filename, data.filedata);
           loadingOutAnimation();
-          // location.href = "xm1100.html";
-          // location.href = "xm1100.html";
+          // location.href = "xm2130.html";
+          // location.href = "xm2130.html";
         } else {
-          document.getElementById("xm2110alert").textContent = "서버 오류";
+          document.getElementById("xm2120alert").textContent = "서버 오류";
         }
       });
     });
   });
 }
 function xm3010_inputAddress(eth) {
-  chrome.storage.local.get("xm1010", localStorageData => {
+  chrome.storage.local.get("xm1100", localStorageData => {
     userBaseWalletInfo({
-      address: localStorageData.xm1010.data.address,
-      // id: localStorageData.xm1010.data.id,
-      email: localStorageData.xm1010.data.email,
+      address: localStorageData.xm1100.data.address,
+      // id: localStorageData.xm1100.data.id,
+      email: localStorageData.xm1100.data.email,
       eth,
     });
   });
@@ -574,18 +575,18 @@ function xm3010_inputAddress(eth) {
       }
     });
   });
-  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+  document.getElementById("xm1000flushCache").addEventListener("click", e => {
     chrome.storage.local.clear(() => {
-      location.href = "xm1010.html";
+      location.href = "xm1100.html";
     });
   });
 }
 function xm3030_inputBalance(eth) {
-  chrome.storage.local.get("xm1010", localStorageData => {
+  chrome.storage.local.get("xm1100", localStorageData => {
     userBaseWalletInfo({
-      address: localStorageData.xm1010.data.address,
-      // id: localStorageData.xm1010.data.id,
-      email: localStorageData.xm1010.data.email,
+      address: localStorageData.xm1100.data.address,
+      // id: localStorageData.xm1100.data.id,
+      email: localStorageData.xm1100.data.email,
       eth,
     });
   });
@@ -621,14 +622,14 @@ function xm3030_inputBalance(eth) {
     chrome.storage.local.set({ xmTransferAddress: "" });
     location.href = "xm3010.html";
   });
-  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+  document.getElementById("xm1000flushCache").addEventListener("click", e => {
     chrome.storage.local.clear(() => {
-      location.href = "xm1010.html";
+      location.href = "xm1100.html";
     });
   });
 }
 function xm3050_inputpassword(eth, utils) {
-  chrome.storage.local.get("xm1010", ({ xm1010 }) => {
+  chrome.storage.local.get("xm1100", ({ xm1100 }) => {
     chrome.storage.local.get("xmTransferAddress", ({ xmTransferAddress }) => {
       chrome.storage.local.get("xmTransferValue", ({ xmTransferValue }) => {
         document.getElementById("toAddress").textContent = xmTransferAddress;
@@ -645,7 +646,7 @@ function xm3050_inputpassword(eth, utils) {
             loadingAnimation();
             webSocket.webSocketInit(async socket => {
               const memberInfo = {};
-              memberInfo.member = xm1010.data.member;
+              memberInfo.member = xm1100.data.member;
               memberInfo.pin = pin;
               const response = await webSocket.sendMsgToSocket([
                 "xm3050",
@@ -654,12 +655,12 @@ function xm3050_inputpassword(eth, utils) {
               if (response.code === 9102) {
                 AJAXRequestMethod({
                   method: "GET",
-                  requestURL: `https://app.xrun.run/gateway.php?act=app4300-02-rev&member=${xm1010.data.member}&currency=11&amount=${xmTransferValue.value}&addrto=${xmTransferAddress}&memo=7603&pin=${pin}`,
+                  requestURL: `${gatewayRemoteAddresss}?act=app4300-02-rev&member=${xm1100.data.member}&currency=11&amount=${xmTransferValue.value}&addrto=${xmTransferAddress}&memo=7603&pin=${pin}`,
                 })
                   .then(data => {
                     console.log(data);
                     loadingOutAnimation();
-                    location.href = "xm1030.html";
+                    location.href = "xm1000.html";
                   })
                   .catch(error => {
                     console.log(error);
@@ -680,15 +681,15 @@ function xm3050_inputpassword(eth, utils) {
       });
     });
   });
-  document.getElementById("xm1030flushCache").addEventListener("click", e => {
+  document.getElementById("xm1000flushCache").addEventListener("click", e => {
     chrome.storage.local.clear(() => {
-      location.href = "xm1010.html";
+      location.href = "xm1100.html";
     });
   });
 }
 function xm3060_receipt(eth) {
   document.getElementById("home").addEventListener("click", () => {
-    location.href = "xm1030.html";
+    location.href = "xm1000.html";
   });
   chrome.storage.local.get("receipt", ({ receipt }) => {
     chrome.storage.local.get("xmTransferValue", async ({ xmTransferValue }) => {
@@ -712,7 +713,7 @@ function xm3060_receipt(eth) {
 }
 function xm3070_failureReceipt() {
   document.getElementById("home").addEventListener("click", () => {
-    location.href = "xm1030.html";
+    location.href = "xm1000.html";
   });
 }
 function saveToFile_Chrome(fileName, content) {

@@ -7,7 +7,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "xm1010.html"
+    "default_popup": "xm1100.html"
   },
   "icons": {
     "16": "images/icon-16.png",
