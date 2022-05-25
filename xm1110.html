@@ -39,8 +39,15 @@
               <nav
                 class="navbar navbar-expand-lg navbar-light px-0 justify-content-between"
               >
-                <a class="navbar-brand" href="xm2000.html"
+                <a class="navbar-brand" href="xm1100.html"
                   ><img src="./images/logo.png" alt="" /> <span>XRUN </span></a
+                >
+                <a
+                  class="page-back text-muted"
+                  href="xm1100.html?clear=true"
+                  style="margin-bottom: 0px"
+                  id="xmTransfer"
+                  ><span><i class="fa fa-angle-left"></i></span> Back</a
                 >
               </nav>
             </div>
@@ -59,30 +66,43 @@
                   </p>
                   <form action="index.html">
                     <div class="mb-3">
-                      <label>Your PhoneNumber Code</label>
+                      <label>Input your mobile code</label>
                       <input
                         type="text"
+                        id="mobilecode"
+                        maxlength="4"
                         class="form-control text-center font-weight-bold"
                         placeholder="1122"
                       />
                     </div>
+                    <div class="new-account mt-3">
+                      <p class="text-success" id="xm1110alert">
+                        Check yout phone , and input your mobile code
+                      </p>
+                    </div>
                     <div class="text-center">
-                      <button type="submit" class="btn btn-success w-100">
-                        Verify
-                      </button>
-                      <button type="submit" class="btn btn-primary w-100">
+                      <button
+                        id="xm1110ReSend"
+                        type="submit"
+                        class="xm1110ReSendbtn xm1110SendFinallbtn btn btn-primary w-100"
+                      >
                         Re-send PhoneNumber Code
                       </button>
+
+                      <button
+                        id="xm1110Verify"
+                        type="submit"
+                        class="xm1110Verifybtn xm1110SendFinallbtn btn btn-success w-100"
+                      >
+                        Verify
+                      </button>
+                    </div>
+                    <div class="info mt-3">
+                      <p class="text-muted">
+                        You dont recommended to save password to browsers!
+                      </p>
                     </div>
                   </form>
-                  <button class="btn btn-primary w-100">
-                    <a href="xm1000.html">pass</a>
-                  </button>
-                  <div class="info mt-3">
-                    <p class="text-muted">
-                      You dont recommended to save password to browsers!
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
