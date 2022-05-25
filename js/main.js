@@ -667,6 +667,15 @@ function xm3010_inputAddress(eth) {
       email: localStorageData.xm1100.data.email,
       eth,
     });
+    document.getElementById("address").addEventListener("click", () => {
+      var tempElem = document.createElement("textarea");
+      tempElem.value = localStorageData.xm1100.data.address;
+      document.body.appendChild(tempElem);
+      tempElem.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempElem);
+      alert(`Success copy address "${localStorageData.xm1100.data.address}"`);
+    });
   });
   document.getElementById("xm3010btn").addEventListener("click", () => {
     chrome.storage.local.get("mainnetAccount", ({ mainnetAccount }) => {
@@ -696,6 +705,15 @@ function xm3030_inputBalance(eth) {
       // id: localStorageData.xm1100.data.id,
       email: localStorageData.xm1100.data.email,
       eth,
+    });
+    document.getElementById("address").addEventListener("click", () => {
+      var tempElem = document.createElement("textarea");
+      tempElem.value = localStorageData.xm1100.data.address;
+      document.body.appendChild(tempElem);
+      tempElem.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempElem);
+      alert(`Success copy address "${localStorageData.xm1100.data.address}"`);
     });
   });
   document.getElementById("xm3030btn").addEventListener("click", () => {
