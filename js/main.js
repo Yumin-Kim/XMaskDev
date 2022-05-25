@@ -35,13 +35,19 @@ const msg = {
     inputBox:
       "Please input your XRUN AR Appliaction email , password information",
   },
+  xm2110: {
+    NotInputData: "Input information",
+    sendSMSData: "Please check. Your mobile authentication code has been sent",
+    ErrorSendSMSData: "Please re-enter your cell phone information",
+  },
   xm2120: {
     inputBox:
       "Please input your XRUN AR Appliaction email , password information",
   },
-  xm2110: {
+  xm2210: {
     NotInputData: "Input information",
-    sendSMSData: "",
+    sendSMSData: "Please check. Your mobile authentication code has been sent",
+    ErrorSendSMSData: "Please re-enter your cell phone information",
   },
   xm3010: {
     validAddress: "Invalid Address",
@@ -87,7 +93,8 @@ createWeb3(mainnetIP)
         return;
       }
       case "xm2210": {
-        xm2210_AuthEmailFunction();
+        // xm2210_AuthEmailFunction();
+        xm2210_requestSMS();
         return;
       }
       case "xm2230": {
@@ -330,40 +337,6 @@ function xm1000_mainPopup(eth) {
     });
   });
 }
-function xm2120_signinFunction() {
-  document.getElementById("xm2120btn").addEventListener("click", e => {
-    loadingAnimation();
-    document.getElementById("xm2120alert").textContent = "";
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const pin = document.getElementById("pin").value;
-    if (email.trim() === "" || pin.trim() === "") {
-      document.getElementById("xm2120alert").textContent = msg.xm2120.inputBox;
-      return;
-    } else {
-      webSocket.webSocketInit(async socket => {
-        const memberInfo = {};
-        memberInfo.email = email;
-        memberInfo.pin = pin;
-        const data = await webSocket.sendMsgToSocket([
-          "xm2120",
-          JSON.stringify(memberInfo),
-        ]);
-        if (data.code === 9102) {
-          chrome.storage.local.set({ xm2120: data });
-          // location.href = "xm2110.html";
-          location.href = "xm2130.html";
-        } else {
-          loadingOutAnimation();
-          document.getElementById("xm2120alert").textContent =
-            msg.xm2120.inputBox;
-          document.getElementById("email").value = "";
-          document.getElementById("pin").value = "";
-        }
-      });
-    }
-  });
-}
 function xm2110_requestEmail() {
   chrome.storage.local.get("xm2120", ({ xm2120 }) => {
     console.log(xm2120);
@@ -389,63 +362,124 @@ function xm2110_requestEmail() {
 function xm2110_requestSMS() {
   displayTag(document.getElementsByClassName("xm2110ReSendbtn"), "none");
   displayTag(document.getElementsByClassName("inputMobileCodeClass"), "none");
+  displayTag(document.getElementsByClassName("xm2110SendFinallbtn"), "none");
+
   document
     .getElementsByClassName("xm2110sendbtn")
     .item(0)
     .addEventListener("click", e => {
       e.preventDefault();
-      let mobileCode;
-      const country = document.getElementById("region").value;
-      const mobile = document.getElementById("mobile").value;
-      if (country.trim() === "" || mobile.trim() === "") {
-        alert("Input Information");
-      } else {
-        displayTag(document.getElementsByClassName("xm2110ReSendbtn"), "block");
-        displayTag(document.getElementsByClassName("xm2110sendbtn"), "none");
-        regionSelectData.forEach(value => {
-          if (value.region === country) {
-            mobileCode = value.code;
-          }
-        });
-        AJAXRequestMethod({
-          method: "POST",
-          requestURL: `${gatewayRemoteAddresss}?act=login-02&mobile=${mobile}&country=${mobileCode}`,
-        }).then(data => {
-          console.log(data);
-        });
-      }
+      validAndRequestMobileCode("xm2110", "xm2120");
     });
-  document.getElementById("xm2110Verify").addEventListener("click", e => {
-    e.preventDefault();
-  });
+
   document.getElementById("xm2110ReSend").addEventListener("click", e => {
     e.preventDefault();
+    validAndRequestMobileCode("xm2110", "xm2120");
   });
-
-  // document.getElementsByClassName("xm2110ReSendbtn").item();
-  // chrome.storage.local.get("xm2120", ({ xm2120 }) => {
-  //   console.log(xm2120);
-  //   webSocket.webSocketInit(async socket => {
-  //     const memberInfo = {};
-  //     memberInfo.id = xm2120.id;
-  //     memberInfo.pin = xm2120.pin;
-  //     memberInfo.email = xm2120.email;
-  //     memberInfo.member = xm2120.member;
-  //     const data = await webSocket.sendMsgToSocket([
-  //       "xm2221_request",
-  //       JSON.stringify(memberInfo),
-  //     ]);
-  //     if (data.code === 9102) {
-  //       chrome.storage.local.set({ xm2220: data });
-  //       // 0412 verifiy email
-  //       // location.href = "xm2210.html";
-  //       location.href = "xm2130.html";
-  //     }
-  //   });
-  // });
 }
-// id 삭제
+function xm2120_signinFunction() {
+  document.getElementById("xm2120btn").addEventListener("click", e => {
+    loadingAnimation();
+    document.getElementById("xm2120alert").textContent = "";
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const pin = document.getElementById("pin").value;
+    if (email.trim() === "" || pin.trim() === "") {
+      document.getElementById("xm2120alert").textContent = msg.xm2120.inputBox;
+      return;
+    } else {
+      webSocket.webSocketInit(async socket => {
+        const memberInfo = {};
+        memberInfo.email = email;
+        memberInfo.pin = pin;
+        const data = await webSocket.sendMsgToSocket([
+          "xm2120",
+          JSON.stringify(memberInfo),
+        ]);
+        if (data.code === 9102) {
+          chrome.storage.local.set({ xm2120: data });
+          location.href = "xm2130.html";
+        } else {
+          loadingOutAnimation();
+          document.getElementById("xm2120alert").textContent =
+            msg.xm2120.inputBox;
+          document.getElementById("email").value = "";
+          document.getElementById("pin").value = "";
+        }
+      });
+    }
+  });
+}
+
+function xm2210_requestSMS() {
+  displayTag(document.getElementsByClassName("xm2210ReSendbtn"), "none");
+  displayTag(document.getElementsByClassName("inputMobileCodeClass"), "none");
+  displayTag(document.getElementsByClassName("xm2210SendFinallbtn"), "none");
+
+  document
+    .getElementsByClassName("xm2210sendbtn")
+    .item(0)
+    .addEventListener("click", e => {
+      e.preventDefault();
+      validAndRequestMobileCode("xm2210", "xm2220", phoneNumber => {
+        chrome.storage.local.set({ xm2210: phoneNumber });
+      });
+    });
+
+  document.getElementById("xm2210ReSend").addEventListener("click", e => {
+    e.preventDefault();
+    validAndRequestMobileCode("xm2210", "xm2220", data => {
+      chrome.storage.local.set({ xm2210: data });
+    });
+  });
+}
+function xm2210_AuthEmailFunction() {
+  let count = 0;
+  chrome.storage.local.get("xm2220", result => {
+    if (Object.entries(result).length !== 0) {
+      const { data } = result.xm2220;
+      document.getElementById("memberemail").textContent = data.email;
+      // document.getElementById("auth").
+
+      document.getElementById("sendEmail").addEventListener("click", e => {
+        e.preventDefault();
+        webSocket.webSocketInit(async socket => {
+          const response = await webSocket.sendMsgToSocket([
+            "xm2221_request",
+            JSON.stringify(data),
+          ]);
+          if (response.code === 9102) {
+            chrome.storage.local.set({ xm2221_request: response });
+            console.log(response);
+            document.getElementById("sendEmail").hidden = true;
+            document.getElementById("auth").hidden = false;
+            document.getElementById("pass").hidden = false;
+          }
+        });
+        document.getElementById("auth").addEventListener("click", e => {
+          e.preventDefault();
+          webSocket.webSocketInit(async socket => {
+            const response = await webSocket.sendMsgToSocket([
+              "xm2222_auth",
+              JSON.stringify(data),
+            ]);
+            if (response.code === 9102) {
+              chrome.storage.local.set({ xm2222_auth: response });
+              console.log(response);
+              document.getElementById("auth").hidden = true;
+            }
+          });
+        });
+        document.getElementById("pass").addEventListener("click", e => {});
+      });
+    }
+  });
+}
 function xm2220_signupFunction() {
+  chrome.storage.local.get("xm2210", ({ xm2210 }) => {
+    document.getElementById("phoneNumber").value = xm2210.mobile;
+    document.getElementById("region").value = xm2210.country;
+  });
   document.getElementById("xm2220btn").addEventListener("click", function (e) {
     e.preventDefault();
     // const id = document.getElementById("id").value;
@@ -499,48 +533,6 @@ function xm2220_signupFunction() {
       //     document.getElementById("email").value = "";
       //   }
       // });
-    }
-  });
-}
-function xm2210_AuthEmailFunction() {
-  let count = 0;
-  chrome.storage.local.get("xm2220", result => {
-    if (Object.entries(result).length !== 0) {
-      const { data } = result.xm2220;
-      document.getElementById("memberemail").textContent = data.email;
-      // document.getElementById("auth").
-
-      document.getElementById("sendEmail").addEventListener("click", e => {
-        e.preventDefault();
-        webSocket.webSocketInit(async socket => {
-          const response = await webSocket.sendMsgToSocket([
-            "xm2221_request",
-            JSON.stringify(data),
-          ]);
-          if (response.code === 9102) {
-            chrome.storage.local.set({ xm2221_request: response });
-            console.log(response);
-            document.getElementById("sendEmail").hidden = true;
-            document.getElementById("auth").hidden = false;
-            document.getElementById("pass").hidden = false;
-          }
-        });
-        document.getElementById("auth").addEventListener("click", e => {
-          e.preventDefault();
-          webSocket.webSocketInit(async socket => {
-            const response = await webSocket.sendMsgToSocket([
-              "xm2222_auth",
-              JSON.stringify(data),
-            ]);
-            if (response.code === 9102) {
-              chrome.storage.local.set({ xm2222_auth: response });
-              console.log(response);
-              document.getElementById("auth").hidden = true;
-            }
-          });
-        });
-        document.getElementById("pass").addEventListener("click", e => {});
-      });
     }
   });
 }
@@ -869,4 +861,72 @@ function AJAXRequestMethod({ method, requestURL }) {
       }
     };
   });
+}
+
+function validAndRequestMobileCode(currentXMPage, nextXMPage, func = null) {
+  let mobileCode;
+  const country = document.getElementById("region").value;
+  const mobile = document.getElementById("mobile").value;
+  if (country.trim() === "" || mobile.trim() === "") {
+    alert(msg[currentXMPage].NotInputData);
+  } else {
+    displayTag(
+      document.getElementsByClassName(`${currentXMPage}sendbtn`),
+      "none"
+    );
+    regionSelectData.forEach(value => {
+      if (value.region === country) {
+        mobileCode = value.code;
+      }
+    });
+    displayTag(
+      document.getElementsByClassName("inputMobileCodeClass"),
+      "block"
+    );
+    displayTag(
+      document.getElementsByClassName(`${currentXMPage}Verifybtn`),
+      "block"
+    );
+    AJAXRequestMethod({
+      method: "POST",
+      requestURL: `${gatewayRemoteAddresss}?act=login-02&mobile=${mobile}&country=${mobileCode}`,
+    })
+      .then(data => {
+        alert(msg[currentXMPage].sendSMSData);
+        document
+          .getElementById(`${currentXMPage}Verify`)
+          .addEventListener("click", e => {
+            e.preventDefault();
+            const code = document.getElementById("mobilecode").value;
+            AJAXRequestMethod({
+              method: "POST",
+              requestURL: `${gatewayRemoteAddresss}?act=login-03&mobile=${mobile}&code=${code}`,
+            }).then(verify => {
+              const { data } = verify;
+              console.log("Verify");
+              console.log(data);
+              if (data === "login") {
+                if (func !== null) {
+                  func({ mobile, country });
+                }
+                location.href = `${nextXMPage}.html`;
+              } else {
+                alert(msg[currentXMPage].ErrorSendSMSData);
+                displayTag(
+                  document.getElementsByClassName(`${currentXMPage}ReSendbtn`),
+                  "block"
+                );
+
+                document.getElementById("mobilecode").value = "";
+              }
+            });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        document.getElementById("mobile").value = "";
+        document.getElementById("region").value = "";
+        alert(msg[currentXMPage].ErrorSendSMSData);
+      });
+  }
 }

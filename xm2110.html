@@ -38,6 +38,7 @@
                   <a class="page-back text-muted" href="xm2220.html"
                     ><span><i class="fa fa-angle-left"></i></span> Back</a
                   >
+                  <h2 class="text-center">SIGN UP</h2>
                   <h3 class="text-center">PhoneNumber Verification</h3>
                   <p class="text-center mb-5">
                     We will send one time code on this number
@@ -71,15 +72,12 @@
                         class="form-control text-center font-weight-bold"
                       />
                     </div>
-                    <div
-                      class="inputMobileCodeClass"
-                      id="inputMobileCode"
-                      class="mb-3"
-                    >
+                    <div class="mb-3 inputMobileCodeClass" id="inputMobileCode">
                       <label>Input your mobile code</label>
                       <input
                         type="text"
                         id="mobilecode"
+                        maxlength="4"
                         class="form-control text-center font-weight-bold"
                         placeholder="1122"
                       />
@@ -96,7 +94,7 @@
                     <button
                       id="xm2110ReSend"
                       type="submit"
-                      class="xm2110ReSendbtn btn btn-primary w-100"
+                      class="xm2110ReSendbtn xm2110SendFinallbtn btn btn-primary w-100"
                     >
                       Re-send PhoneNumber Code
                     </button>
@@ -104,7 +102,7 @@
                     <button
                       id="xm2110Verify"
                       type="submit"
-                      class="xm2110ReSendbtn btn btn-success w-100"
+                      class="xm2110Verifybtn xm2110SendFinallbtn btn btn-success w-100"
                     >
                       Verify
                     </button>
