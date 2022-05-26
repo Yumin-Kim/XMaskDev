@@ -95,7 +95,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
       [pathname] = pathname.slice(1).split(".");
       switch (pathname) {
         case "xm1000": {
-          xm1000_mainPopup(eth);
+          xm1000_mainPopup(eth, chromeExtensionID);
           return;
         }
         case "xm1100": {
@@ -107,7 +107,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
           return;
         }
         case "xm1200": {
-          xm1200_importKeyFile(eth);
+          xm1200_importKeyFile(eth, chromeExtensionID);
           return;
         }
         case "xm2120": {
@@ -162,7 +162,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
     })
     .catch(() => {});
 });
-function xm1000_mainPopup(eth) {
+function xm1000_mainPopup(eth, chromeExtensionID) {
   chrome.storage.local.get("xm1100", localStorageData => {
     console.log(localStorageData);
     chrome.storage.local.set({ xmTransferAddress: "" });
@@ -467,7 +467,12 @@ function xm1110_requestSMS() {
     });
   });
 }
-function xm1200_importKeyFile(eth) {
+function xm1200_importKeyFile(eth, chromeExtensionID) {
+  // chrome.action.openPopup();
+  chrome.tabs.get({ tabId: chromeExtensionID }, tab => {
+    console.log("Hello");
+    console.log(tab);
+  });
   const inputEl = document.querySelector("#xm1200keyfile");
   let readFile;
   inputEl.addEventListener("change", function (event) {
