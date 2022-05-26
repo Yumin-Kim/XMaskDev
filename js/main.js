@@ -39,6 +39,14 @@ const msg = {
     ErrorSendSMSData: "ReTry send mobile code or re-enter mobile code",
     ResendSMSData: "Re-Send mobile code , please check your phone",
   },
+  xm1200: {
+    emptyFile: "Empty Upload file , please check file",
+    notInputPassword: "please check password box",
+    keyfileDamageAndPasswordError: "File corruption or password failure",
+    keyfileFormatError: "Error in formatting key file",
+    notFoundUser: `Account does not exist in XRUN mainnet.
+Please proceed to sign up to use XRUN Wallet`,
+  },
   xm2110: {
     NotInputData: "Input information",
     sendSMSData: "Please check. Your mobile authentication code has been sent",
@@ -72,81 +80,88 @@ const gatewayRemoteAddresss = "https://app.xrun.run/gateway.php";
 // $("#preloader").css("opacity", 0.6);
 // $("#preloader").fadeIn(1000);
 let utils;
-createWeb3(mainnetIP)
-  .then(web3 => {
-    const { eth } = web3;
-    utils = web3.utils;
-    getMainnetAccountList({ eth }).then(accounts => {
-      let mainnetAccount = accounts.map(v => v.toLowerCase());
-      chrome.storage.local.set({ mainnetAccount });
-    });
-    let { pathname } = location;
-    console.log(pathname);
-    [pathname] = pathname.slice(1).split(".");
-    switch (pathname) {
-      case "xm1000": {
-        xm1000_mainPopup(eth);
-        return;
-      }
-      case "xm1100": {
-        xm1100_mainPopupSignin();
-        return;
-      }
-      case "xm1110": {
-        xm1110_requestSMS();
-        return;
-      }
-      case "xm2120": {
-        xm2120_signinFunction();
-        return;
-      }
-      case "xm2110": {
-        // xm2110_requestEmail();
-        xm2110_requestSMS();
-      }
-      case "xm2220": {
-        xm2220_signupFunction(eth);
-        return;
-      }
-      case "xm2210": {
-        // xm2210_AuthEmailFunction();
-        xm2210_requestSMS();
-        return;
-      }
-      case "xm2230": {
-        xm2230_downloadKeyFile();
-        return;
-      }
+chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+  const chromeExtensionID = tabs[0].url.split(/:\/\//)[1].split("/")[0];
+  createWeb3(mainnetIP)
+    .then(web3 => {
+      const { eth } = web3;
+      utils = web3.utils;
+      getMainnetAccountList({ eth }).then(accounts => {
+        let mainnetAccount = accounts.map(v => v.toLowerCase());
+        chrome.storage.local.set({ mainnetAccount });
+      });
+      let { pathname } = location;
+      console.log(pathname);
+      [pathname] = pathname.slice(1).split(".");
+      switch (pathname) {
+        case "xm1000": {
+          xm1000_mainPopup(eth);
+          return;
+        }
+        case "xm1100": {
+          xm1100_mainPopupSignin(chromeExtensionID);
+          return;
+        }
+        case "xm1110": {
+          xm1110_requestSMS();
+          return;
+        }
+        case "xm1200": {
+          xm1200_importKeyFile(eth);
+          return;
+        }
+        case "xm2120": {
+          xm2120_signinFunction();
+          return;
+        }
+        case "xm2110": {
+          // xm2110_requestEmail();
+          xm2110_requestSMS();
+        }
+        case "xm2220": {
+          xm2220_signupFunction(eth);
+          return;
+        }
+        case "xm2210": {
+          // xm2210_AuthEmailFunction();
+          xm2210_requestSMS();
+          return;
+        }
+        case "xm2230": {
+          xm2230_downloadKeyFile();
+          return;
+        }
 
-      case "xm3010": {
-        xm3010_inputAddress(eth);
-        return;
+        case "xm3010": {
+          xm3010_inputAddress(eth);
+          return;
+        }
+        case "xm3030": {
+          xm3030_inputBalance(eth);
+          return;
+        }
+        case "xm3050": {
+          xm3050_inputpassword(eth, utils);
+          return;
+        }
+        case "xm3060": {
+          xm3060_receipt(eth);
+          return;
+        }
+        case "xm3070": {
+          xm3070_failureReceipt();
+          return;
+        }
+        case "xm5101": {
+          xm5101_detailERC20TransacitonRecipt(eth);
+          return;
+        }
+        default:
+          return;
       }
-      case "xm3030": {
-        xm3030_inputBalance(eth);
-        return;
-      }
-      case "xm3050": {
-        xm3050_inputpassword(eth, utils);
-        return;
-      }
-      case "xm3060": {
-        xm3060_receipt(eth);
-        return;
-      }
-      case "xm3070": {
-        xm3070_failureReceipt();
-        return;
-      }
-      case "xm5101": {
-        xm5101_detailERC20TransacitonRecipt(eth);
-        return;
-      }
-      default:
-        return;
-    }
-  })
-  .catch(() => {});
+    })
+    .catch(() => {});
+});
 function xm1000_mainPopup(eth) {
   chrome.storage.local.get("xm1100", localStorageData => {
     console.log(localStorageData);
@@ -304,7 +319,7 @@ function xm1000_mainPopup(eth) {
     });
   });
 }
-function xm1100_mainPopupSignin() {
+function xm1100_mainPopupSignin(chromeExtensionID) {
   chrome.storage.local.get(result => {
     const { search } = location;
     const [, clear] = search.split("=");
@@ -314,8 +329,17 @@ function xm1100_mainPopupSignin() {
       chrome.storage.local.set({ xm1110: "" });
       return;
     }
-    if (result.xm1110 !== undefined) {
-      if (result.xm1110 === "auth") location.href = "xm1000.html";
+    //로그인 O 및 인증 O
+    if (result.xm1100 !== undefined && result.xm1110 === "auth") {
+      console.log("로그인 O 및 인증 O");
+      location.href = "xm1000.html";
+      return;
+    }
+    //로그인 O 및 인증 X
+    if (result.xm1110 === undefined && result.xm1100 !== undefined) {
+      console.log("로그인 O 및 인증 X");
+      location.href = "xm1110.html";
+      return;
     }
   });
   document.getElementById("xm1100btn").addEventListener("click", function (e) {
@@ -325,6 +349,7 @@ function xm1100_mainPopupSignin() {
     const email = document.getElementById("email").value;
     const pin = document.getElementById("pin").value;
     if (email.trim() === "" || pin.trim() === "") {
+      loadingOutAnimation();
       document.getElementById("xm1100alert").textContent = msg.xm1100.inputBox;
       return;
     } else {
@@ -336,7 +361,6 @@ function xm1100_mainPopupSignin() {
           "xm1100",
           JSON.stringify(memberInfo),
         ]);
-        console.log(response);
         if (response.code === 9102) {
           chrome.storage.local.set({ xm1100: response });
           location.href = "xm1110.html";
@@ -350,6 +374,20 @@ function xm1100_mainPopupSignin() {
         }
       });
     }
+  });
+  document
+    .getElementById("xm1100ImportKeyFilebtn")
+    .addEventListener("click", e => {
+      e.preventDefault();
+      chrome.tabs.create({
+        url: `chrome-extension://${chromeExtensionID}/xm1200.html`,
+      });
+    });
+  document.getElementById("xm1100signupTag").addEventListener("click", e => {
+    e.preventDefault();
+    chrome.tabs.create({
+      url: `chrome-extension://${chromeExtensionID}/xm2210.html`,
+    });
   });
 }
 function xm1110_requestSMS() {
@@ -427,6 +465,102 @@ function xm1110_requestSMS() {
         });
       });
     });
+  });
+}
+function xm1200_importKeyFile(eth) {
+  const inputEl = document.querySelector("#xm1200keyfile");
+  let readFile;
+  inputEl.addEventListener("change", function (event) {
+    // FileList
+    const fileList = inputEl.files || event.target.files;
+    // File
+    const file = fileList[0];
+    const reader = new FileReader();
+    reader.onload = function (progressEvent) {
+      readFile = progressEvent.target.result;
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById("xm1200SignIn").addEventListener("click", e => {
+    e.preventDefault();
+    $("#preloader").css("opacity", 0.6);
+    $("#preloader").fadeIn(0);
+    const userUploadKeyfile = document.getElementById("xm1200keyfile").value;
+    const pin = document.getElementById("pin").value;
+    console.log(readFile);
+    if (userUploadKeyfile.trim() === "") {
+      alert(msg.xm1200.emptyFile);
+      loadingOutAnimation();
+      return;
+    } else if (pin.trim() === "") {
+      alert(msg.xm1200.notInputPassword);
+      loadingOutAnimation();
+      return;
+    }
+    try {
+      chrome.storage.local.get("mainnetAccount", ({ mainnetAccount }) => {
+        let validMainNetAccount = false;
+        const parseJSON = JSON.parse(readFile);
+        webSocket.webSocketInit(async socket => {
+          let userInfo;
+          try {
+            userInfo = await decryptAccount({
+              eth,
+              keyfile: parseJSON,
+              password: pin,
+            });
+          } catch (error) {
+            alert(msg.xm1200.keyfileFormatError);
+            document.getElementById("pin").value = "";
+            document.getElementById("xm1200keyfile").value = "";
+            loadingOutAnimation();
+            return;
+          }
+          mainnetAccount.forEach(v => {
+            if (v.toLowerCase() === userInfo.address.toLowerCase()) {
+              validMainNetAccount = true;
+            }
+          });
+          const memberInfo = {
+            address: userInfo.address,
+            pin,
+          };
+          const response = await webSocket.sendMsgToSocket([
+            "xm1200",
+            JSON.stringify(memberInfo),
+          ]);
+          if (response.code === 9102 && validMainNetAccount) {
+            chrome.storage.local.set({ xm1100: response });
+            location.href = "xm2130.html";
+          } else {
+            alert(msg.xm1200.notFoundUser);
+            document.getElementById("pin").value = "";
+            document.getElementById("xm1200keyfile").value = "";
+            loadingOutAnimation();
+          }
+        });
+      });
+    } catch (error) {
+      if (error.message.includes("Key")) {
+        alert(msg.xm1200.keyfileDamageAndPasswordError);
+      } else if (error.message.includes("Member")) {
+        alert(msg.xm1200.notFoundUser);
+      } else {
+        alert(msg.xm1200.keyfileFormatError);
+      }
+      document.getElementById("pin").value = "";
+      document.getElementById("xm1200keyfile").value = "";
+      loadingOutAnimation();
+    }
+    //JSON파일 유무
+    //keyfile format 유무
+    //메인넷 존재 유무
+  });
+
+  document.getElementById("xm1200signupTag").addEventListener("click", e => {
+    e.preventDefault();
+    location.href = "xm2210.html";
   });
 }
 function xm2110_requestEmail() {

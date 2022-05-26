@@ -640,6 +640,17 @@ async function getMainnetAccountList({ eth }) {
   return await eth.getAccounts();
 }
 
+async function decryptAccount({ eth, keyfile, password }) {
+  return new Promise((res, rej) => {
+    try {
+      const userData = eth.accounts.decrypt(keyfile, password);
+      res(userData);
+    } catch (error) {
+      rej(error);
+    }
+  });
+}
+
 function unixToDate(date) {
   var time = new Date(date * 1000),
     month = time.getMonth() + 1,

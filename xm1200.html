@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>XMask</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon.png"
+    />
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body>
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+
+    <div id="main-wrapper">
+      <div class="authincation section-padding">
+        <div class="container h-100">
+          <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-xl-5 col-md-6">
+              <div class="mini-logo text-center my-5">
+                <a href="xm2000.html"><img src="./images/logo.png" alt="" /></a>
+              </div>
+              <div class="auth-form card">
+                <div class="card-body">
+                  <h2 class="text-center">
+                    Import keyFile to login by XRUN Wallet
+                  </h2>
+                  <div class="card-body">
+                    <form action="verify-step-3.html" class="identity-upload">
+                      <div class="mb-3">
+                        <label class="me-sm-2">Upload your keyfile </label>
+                        <span class="float-right"
+                          >Maximum file size is 2mb</span
+                        >
+                        <div
+                          class="file-upload-wrapper"
+                          data-text="xxx@xrun.com_0xxx.xrunkey"
+                        >
+                          <input
+                            name="file-upload-field"
+                            type="file"
+                            id="xm1200keyfile"
+                            class="file-upload-field"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label>Password</label>
+                        <input
+                          type="password"
+                          class="form-control text-center font-weight-bold"
+                          id="pin"
+                        />
+                      </div>
+                    </form>
+                    <div class="text-center">
+                      <button id="xm1200SignIn" class="btn btn-success w-100">
+                        Sign in
+                      </button>
+                    </div>
+                  </div>
+                  <div class="new-account mt-3">
+                    <p>
+                      Don't have an account?
+                      <a
+                        id="xm1200signupTag"
+                        style="cursor: pointer"
+                        class="text-primary"
+                        >Sign up</a
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./vendor/jquery/jquery.min.js"></script>
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./js/scripts.js"></script>
+    <script src="js/WSocket.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/web3_method.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
