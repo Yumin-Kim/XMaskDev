@@ -84,6 +84,8 @@ let utils;
 chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
   // const chromeExtensionID = tabs[0].url.split(/:\/\//)[1].split("/")[0];
   const chromeExtensionID = "hlhgklmebckgaiablebhabhndllojnlj";
+  //DEPLOYID
+  //  const chromeExtensionID = "jjajhgbfcecalhmongolfdghdjklhilc";
   createWeb3(mainnetIP)
     .then(web3 => {
       const { eth } = web3;
@@ -706,8 +708,10 @@ function xm2210_AuthEmailFunction() {
 }
 function xm2220_signupFunction() {
   chrome.storage.local.get("xm2210", ({ xm2210 }) => {
-    document.getElementById("phoneNumber").value = xm2210.mobile;
-    document.getElementById("region").value = xm2210.country;
+    if (xm2110 !== undefined) {
+      document.getElementById("phoneNumber").value = xm2210.mobile;
+      document.getElementById("region").value = xm2210.country;
+    }
   });
   document.getElementById("xm2220btn").addEventListener("click", function (e) {
     e.preventDefault();
