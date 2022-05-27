@@ -44,6 +44,7 @@ const msg = {
     notInputPassword: "please check password box",
     keyfileDamageAndPasswordError: "File corruption or password failure",
     keyfileFormatError: "Error in formatting key file",
+    NotRegisterAccount: "",
     notFoundUser: `Account does not exist in XRUN mainnet.
 Please proceed to sign up to use XRUN Wallet`,
   },
@@ -81,7 +82,8 @@ const gatewayRemoteAddresss = "https://app.xrun.run/gateway.php";
 // $("#preloader").fadeIn(1000);
 let utils;
 chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-  const chromeExtensionID = tabs[0].url.split(/:\/\//)[1].split("/")[0];
+  // const chromeExtensionID = tabs[0].url.split(/:\/\//)[1].split("/")[0];
+  const chromeExtensionID = "hlhgklmebckgaiablebhabhndllojnlj";
   createWeb3(mainnetIP)
     .then(web3 => {
       const { eth } = web3;
@@ -469,10 +471,6 @@ function xm1110_requestSMS() {
 }
 function xm1200_importKeyFile(eth, chromeExtensionID) {
   // chrome.action.openPopup();
-  chrome.tabs.get({ tabId: chromeExtensionID }, tab => {
-    console.log("Hello");
-    console.log(tab);
-  });
   const inputEl = document.querySelector("#xm1200keyfile");
   let readFile;
   inputEl.addEventListener("change", function (event) {
@@ -493,7 +491,6 @@ function xm1200_importKeyFile(eth, chromeExtensionID) {
     $("#preloader").fadeIn(0);
     const userUploadKeyfile = document.getElementById("xm1200keyfile").value;
     const pin = document.getElementById("pin").value;
-    console.log(readFile);
     if (userUploadKeyfile.trim() === "") {
       alert(msg.xm1200.emptyFile);
       loadingOutAnimation();
@@ -562,6 +559,7 @@ function xm1200_importKeyFile(eth, chromeExtensionID) {
     //keyfile format 유무
     //메인넷 존재 유무
   });
+  console.log("Hello");
 
   document.getElementById("xm1200signupTag").addEventListener("click", e => {
     e.preventDefault();
