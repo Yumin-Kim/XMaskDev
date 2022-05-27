@@ -1085,7 +1085,7 @@ function userBaseWalletInfo({ address, email, id, eth }) {
     console.log(balance);
     if (balance.trim() !== "") {
       document.getElementById("xruntoken").textContent =
-        exponentionToValue(Number(balance)) + " XRUN";
+        exponentionToValue(balance) + " XRUN";
     } else {
       document.getElementById("xruntoken").textContent = "0 XRUN";
     }
