@@ -6,8 +6,8 @@ chrome.runtime.onInstalled.addListener(({ reason, version }) => {
   }
 });
 chrome.runtime.onMessage.addListener((msg, sender, res) => {
-  console.log("Hello   onMessage");
-  console.log(msg, sender, res);
+  // console.log("Hello   onMessage");
+  // console.log(msg, sender, res);
   if (msg.command == "Test") {
     alert("Success");
   }
@@ -15,5 +15,5 @@ chrome.runtime.onMessage.addListener((msg, sender, res) => {
 (async () => {
   let queryOptions = { active: true, currentWindow: true };
   let tab = await chrome.tabs.query(queryOptions);
-  console.log(tab);
+  // console.log(tab);
 })();

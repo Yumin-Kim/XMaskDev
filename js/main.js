@@ -85,7 +85,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
   // const chromeExtensionID = tabs[0].url.split(/:\/\//)[1].split("/")[0];
   const chromeExtensionID = "hlhgklmebckgaiablebhabhndllojnlj";
   //DEPLOYID
-  //  const chromeExtensionID = "jjajhgbfcecalhmongolfdghdjklhilc";
+  // const chromeExtensionID = "jjajhgbfcecalhmongolfdghdjklhilc";
   createWeb3(mainnetIP)
     .then(web3 => {
       const { eth } = web3;
@@ -95,7 +95,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
         chrome.storage.local.set({ mainnetAccount });
       });
       let { pathname } = location;
-      console.log(pathname);
+      // console.log(pathname);
       [pathname] = pathname.slice(1).split(".");
       switch (pathname) {
         case "xm1000": {
@@ -168,7 +168,7 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
 });
 function xm1000_mainPopup(eth, chromeExtensionID) {
   chrome.storage.local.get("xm1100", localStorageData => {
-    console.log(localStorageData);
+    // console.log(localStorageData);
     chrome.storage.local.set({ xmTransferAddress: "" });
     chrome.storage.local.set({
       xmTransferValue: {},
@@ -327,7 +327,7 @@ function xm1100_mainPopupSignin(chromeExtensionID) {
   chrome.storage.local.get(result => {
     const { search } = location;
     const [, clear] = search.split("=");
-    console.log(result);
+    // console.log(result);
     if (clear === "true") {
       chrome.storage.local.set({ xm1100: {} });
       chrome.storage.local.set({ xm1110: "" });
@@ -335,13 +335,13 @@ function xm1100_mainPopupSignin(chromeExtensionID) {
     }
     //로그인 O 및 인증 O
     if (result.xm1100 !== undefined && result.xm1110 === "auth") {
-      console.log("로그인 O 및 인증 O");
+      // console.log("로그인 O 및 인증 O");
       location.href = "xm1000.html";
       return;
     }
     //로그인 O 및 인증 X
     if (result.xm1110 === undefined && result.xm1100 !== undefined) {
-      console.log("로그인 O 및 인증 X");
+      // console.log("로그인 O 및 인증 X");
       location.href = "xm1110.html";
       return;
     }
@@ -409,7 +409,7 @@ function xm1110_requestSMS() {
           requestURL: `${gatewayRemoteAddresss}?act=login-03&mobile=${xm1100.data.mobile}&code=${code}`,
         }).then(verify => {
           const { data } = verify;
-          console.log("Verify");
+          // console.log("Verify");
           if (data === "login") {
             chrome.storage.local.set({ xm1110: "auth" });
             location.href = `xm1000.html`;
@@ -561,7 +561,7 @@ function xm1200_importKeyFile(eth, chromeExtensionID) {
     //keyfile format 유무
     //메인넷 존재 유무
   });
-  console.log("Hello");
+  // console.log("Hello");
 
   document.getElementById("xm1200signupTag").addEventListener("click", e => {
     e.preventDefault();
@@ -570,7 +570,7 @@ function xm1200_importKeyFile(eth, chromeExtensionID) {
 }
 function xm2110_requestEmail() {
   chrome.storage.local.get("xm2120", ({ xm2120 }) => {
-    console.log(xm2120);
+    // console.log(xm2120);
     webSocket.webSocketInit(async socket => {
       const memberInfo = {};
       memberInfo.id = xm2120.id;
@@ -681,7 +681,7 @@ function xm2210_AuthEmailFunction() {
           ]);
           if (response.code === 9102) {
             chrome.storage.local.set({ xm2221_request: response });
-            console.log(response);
+            // console.log(response);
             document.getElementById("sendEmail").hidden = true;
             document.getElementById("auth").hidden = false;
             document.getElementById("pass").hidden = false;
@@ -696,7 +696,7 @@ function xm2210_AuthEmailFunction() {
             ]);
             if (response.code === 9102) {
               chrome.storage.local.set({ xm2222_auth: response });
-              console.log(response);
+              // console.log(response);
               document.getElementById("auth").hidden = true;
             }
           });
@@ -773,14 +773,14 @@ function xm2230_downloadKeyFile() {
   document.getElementById("xm2230btn").addEventListener("click", () => {
     loadingAnimation();
     chrome.storage.local.get("xm2220", cacheData => {
-      console.log("xm2220_get Chrome Store");
-      console.log(cacheData.xm2220);
+      // console.log("xm2220_get Chrome Store");
+      // console.log(cacheData.xm2220);
       webSocket.webSocketInit(async socket => {
         const respose = await webSocket.sendMsgToSocket([
           "xm2230",
           JSON.stringify(cacheData.xm2220.data),
         ]);
-        console.log(respose);
+        // console.log(respose);
         if (respose.code === 9102) {
           const { data } = respose;
           // const filename = data.filename
@@ -823,7 +823,7 @@ function xm3010_inputAddress(eth) {
       const sendToAddress = document
         .getElementById("sendAddress")
         .value.toLowerCase();
-      console.log(sendToAddress.length);
+      // console.log(sendToAddress.length);
       if (sendToAddress.length >= 42) {
         chrome.storage.local.set({ xmTransferAddress: sendToAddress });
         location.href = "xm3030.html";
@@ -867,9 +867,9 @@ function xm3030_inputBalance(eth) {
       document.getElementById("sendBalance").value = "";
     } else {
       if (Number(memberBalanceOf.replace(" XRUN", "")) - Number(value) >= 0) {
-        console.log(value);
-        console.log(memberBalanceOf);
-        console.log(value);
+        // console.log(value);
+        // console.log(memberBalanceOf);
+        // console.log(value);
         chrome.storage.local.set({
           xmTransferValue: {
             value,
@@ -925,12 +925,12 @@ function xm3050_inputpassword(eth, utils) {
                   requestURL: `${gatewayRemoteAddresss}?act=app4300-02-rev&member=${xm1100.data.member}&currency=11&amount=${xmTransferValue.value}&addrto=${xmTransferAddress}&memo=7603&pin=${pin}`,
                 })
                   .then(data => {
-                    console.log(data);
+                    // console.log(data);
                     loadingOutAnimation();
                     location.href = "xm1000.html";
                   })
                   .catch(error => {
-                    console.log(error);
+                    // console.log(error);
                   });
               } else {
                 loadingOutAnimation();
@@ -960,7 +960,7 @@ function xm3060_receipt(eth) {
   });
   chrome.storage.local.get("receipt", ({ receipt }) => {
     chrome.storage.local.get("xmTransferValue", async ({ xmTransferValue }) => {
-      console.log(receipt);
+      // console.log(receipt);
       // if (receipt.code === 9101) {
       //   location.href = "xm3070.html";
       // }
@@ -1001,7 +1001,7 @@ function xm5101_detailERC20TransacitonRecipt(eth) {
       );
     })
     .catch(error => {
-      console.log(error);
+      // console.log(error);
     });
   document.getElementById("home").addEventListener("click", () => {
     location.href = "xm1000.html";
@@ -1009,7 +1009,7 @@ function xm5101_detailERC20TransacitonRecipt(eth) {
 }
 
 function saveToFile_Chrome(fileName, content) {
-  console.log(fileName);
+  // console.log(fileName);
   var blob = new Blob([content], { type: "text/plain" });
   objURL = window.URL.createObjectURL(blob);
 
@@ -1082,7 +1082,7 @@ function userBaseWalletInfo({ address, email, id, eth }) {
   // document.getElementById("id").textContent = id;
   document.getElementById("email").textContent = email;
   getXRUNTokenBalanceOf({ address: address, eth }).then(balance => {
-    console.log(balance);
+    // console.log(balance);
     if (balance.trim() !== "") {
       document.getElementById("xruntoken").textContent =
         exponentionToValue(balance) + " XRUN";
@@ -1153,8 +1153,8 @@ function validAndRequestMobileCode(currentXMPage, nextXMPage, func = null) {
               requestURL: `${gatewayRemoteAddresss}?act=login-03&mobile=${mobile}&code=${code}`,
             }).then(verify => {
               const { data } = verify;
-              console.log("Verify");
-              console.log(data);
+              // console.log("Verify");
+              // console.log(data);
               if (data === "login") {
                 if (func !== null) {
                   func({ mobile, country });
@@ -1173,7 +1173,7 @@ function validAndRequestMobileCode(currentXMPage, nextXMPage, func = null) {
           });
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
         document.getElementById("mobile").value = "";
         document.getElementById("region").value = "";
         alert(msg[currentXMPage].ErrorSendSMSData);
